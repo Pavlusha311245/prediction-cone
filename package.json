@@ -51,7 +51,7 @@
     "test": "bun test",
     "test:watch": "bun test --watch",
     "type-check": "tsc --noEmit",
-    "prepublishOnly": "bun run lint:check && bun run type-check && bun test && bun run build",
+    "prepublishOnly": "if [ -n \"${CI_PUBLISH_SKIP_VERIFY:-}\" ]; then echo '⏭ verification skipped (done in build job)'; else bun run lint:check && bun run type-check && bun test && bun run build; fi",
     "publish:npm": "npm publish --access public",
     "publish:github": "node scripts/publish-github.mjs",
     "release": "bun run publish:npm && bun run publish:github",

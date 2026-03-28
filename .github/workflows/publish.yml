@@ -12,22 +12,36 @@ on:
         type: string
 
 jobs:
-  publish:
-    name: Build & Publish
+  # ── 1. Verify & Build ──────────────────────────────────────────────────────
+  build:
+    name: Verify & Build
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      packages: write  # required for GitHub Packages
+      contents: write   # needed to push/replace tags
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check / replace tag
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          TAG="${{ inputs.tag }}"
+          if git ls-remote --tags origin "refs/tags/$TAG" | grep -q .; then
+            echo "🔄 Tag $TAG already exists — replacing..."
+            git push origin --delete "refs/tags/$TAG"
+          fi
+          git tag "$TAG"
+          git push origin "$TAG"
+          echo "✅ Tag $TAG created"
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
 
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: bun ci
 
       - name: Lint
         run: bun run lint:check
@@ -41,29 +55,90 @@ jobs:
       - name: Build
         run: bun run build
 
-      # ── npm ─────────────────────────────────────────────────────────────────
+      - name: Upload dist
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          retention-days: 1
+
+  # ── 2a. Publish → npm  (parallel) ─────────────────────────────────────────
+  publish-npm:
+    name: Publish → npm
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && format('refs/tags/{0}', inputs.tag) || github.ref }}
+
+      - name: Download dist
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
       - name: Publish to npm
-        run: bun publish --registry=https://registry.npmjs.org --token=${{ secrets.NPM_TOKEN }} --allow-empty-directory
+        run: bun publish --access public --tolerate-republish
         env:
-          BUN_CONFIG_CHECKSUM_ALGORITHM: sha256
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          CI_PUBLISH_SKIP_VERIFY: "1"
 
-      # ── GitHub Packages ──────────────────────────────────────────────────────
+  # ── 2b. Publish → GitHub Packages  (parallel) ─────────────────────────────
+  publish-github:
+    name: Publish → GitHub Packages
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && format('refs/tags/{0}', inputs.tag) || github.ref }}
+
+      - name: Download dist
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
       - name: Publish to GitHub Packages
-        run: bun run publish:github
+        run: node scripts/publish-github.mjs
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # ── GitHub Release ────────────────────────────────────────────────────────
+  # ── 3. GitHub Release  (after both publishes) ──────────────────────────────
+  release:
+    name: GitHub Release
+    needs: [publish-npm, publish-github]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download dist
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
           generate_release_notes: true
           files: |
             dist/index.mjs
             dist/index.cjs
             dist/index.d.mts
             dist/index.d.cts
-
-
-
-
