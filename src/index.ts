@@ -20,7 +20,7 @@ import type {
   ConeOptions,
 } from "./types";
 
-export const version = "0.1.0";
+export const version = "0.1.1";
 
 /**
  * Internal facade that implements the public ConeMenuInstance interface
