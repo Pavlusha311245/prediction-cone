@@ -31,12 +31,21 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+      - name: Install dependencies
+        run: bun ci
+      - name: Build
+        run: bun run build
+      - name: Prepare deploy folder
+        run: |
+          cp -r dist examples/vanilla/dist
+          sed -i "s|../../dist/index.mjs|./dist/index.mjs|g" examples/vanilla/index.html
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
           path: './examples/vanilla'
       - name: Deploy to GitHub Pages
         id: deployment
