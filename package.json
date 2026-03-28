@@ -52,6 +52,9 @@
     "test:watch": "bun test --watch",
     "type-check": "tsc --noEmit",
     "prepublishOnly": "bun run lint:check && bun run type-check && bun test && bun run build",
+    "publish:npm": "npm publish --access public",
+    "publish:github": "node scripts/publish-github.mjs",
+    "release": "bun run publish:npm && bun run publish:github",
     "size": "bunx size-limit"
   },
   "devDependencies": {
