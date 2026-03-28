@@ -1,0 +1,72 @@
+{
+  "files": {
+    "includes": ["**", "!dist", "!node_modules", "!examples"]
+  },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "suspicious": {
+        "noDoubleEquals": "error",
+        "noImplicitAnyLet": "error",
+        "noExplicitAny": "off"
+      },
+      "style": {
+        "noUnusedTemplateLiteral": "warn",
+        "useNamingConvention": "off",
+        "noNonNullAssertion": "off",
+        "noInferrableTypes": "off",
+        "useImportType": "warn"
+      },
+      "performance": {
+        "noDelete": "warn"
+      }
+    }
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 100,
+    "lineEnding": "lf"
+  },
+  "javascript": {
+    "formatter": {
+      "arrowParentheses": "asNeeded",
+      "bracketSameLine": false,
+      "bracketSpacing": true,
+      "jsxQuoteStyle": "double",
+      "quoteProperties": "asNeeded",
+      "semicolons": "always",
+      "trailingCommas": "es5"
+    }
+  },
+  "json": {
+    "formatter": {
+      "indentWidth": 2
+    }
+  },
+  "overrides": [
+    {
+      "includes": ["*.test.ts", "*.test.js"],
+      "linter": {
+        "rules": {
+          "suspicious": {}
+        }
+      }
+    },
+    {
+      "includes": ["dist/**"],
+      "linter": {
+        "enabled": false
+      }
+    }
+  ]
+}

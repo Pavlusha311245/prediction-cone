@@ -1,0 +1,74 @@
+{
+  "name": "prediction-cone",
+  "version": "0.1.0",
+  "description": "Zero-dependency TypeScript radial menu with prediction cone selection — items are chosen by pointer direction within a configurable angular cone",
+  "license": "MIT",
+  "author": "Pavel Zavadski",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Pavlusha311245/prediction-cone.git"
+  },
+  "homepage": "https://github.com/Pavlusha311245/prediction-cone#readme",
+  "bugs": {
+    "url": "https://github.com/Pavlusha311245/prediction-cone/issues"
+  },
+  "keywords": [
+    "radial-menu",
+    "prediction-cone",
+    "context-menu",
+    "pie-menu",
+    "pointer",
+    "gesture",
+    "menu",
+    "ui",
+    "typescript",
+    "zero-dependency"
+  ],
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "lint": "biome check --write .",
+    "lint:check": "biome check .",
+    "format": "biome format --write .",
+    "test": "bun test",
+    "test:watch": "bun test --watch",
+    "type-check": "tsc --noEmit",
+    "prepublishOnly": "bun run lint:check && bun run type-check && bun test && bun run build",
+    "size": "bunx size-limit"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.4.9",
+    "@types/bun": "^1.3.11",
+    "@size-limit/preset-small-lib": "^12.0.1",
+    "size-limit": "^12.0.1",
+    "tsdown": "^0.21.6",
+    "typescript": "^6.0.2"
+  },
+  "size-limit": [
+    {
+      "path": "dist/index.mjs",
+      "limit": "6 kB"
+    }
+  ],
+  "engines": {
+    "node": ">=18"
+  }
+}

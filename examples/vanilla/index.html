@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prediction Cone Menu — Vanilla Example</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        background: #f5f5f5;
+        transition: background-color 0.3s ease, color 0.3s ease;
+      }
+
+      body.dark {
+        background: #1a1a1a;
+        color: #e0e0e0;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 3rem;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+        color: #333;
+      }
+
+      body.dark h1 {
+        color: #fff;
+      }
+
+      .subtitle {
+        font-size: 1.1rem;
+        color: #666;
+      }
+
+      body.dark .subtitle {
+        color: #aaa;
+      }
+
+      .controls {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-bottom: 3rem;
+        flex-wrap: wrap;
+      }
+
+      button {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: all 0.2s ease;
+        background: #0066cc;
+        color: white;
+      }
+
+      button:hover {
+        background: #0052a3;
+        transform: translateY(-2px);
+      }
+
+      button.active {
+        background: #333;
+      }
+
+      body.dark button.active {
+        background: #fff;
+        color: #1a1a1a;
+      }
+
+      .demo-section {
+        background: white;
+        border-radius: 8px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      body.dark .demo-section {
+        background: #2a2a2a;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      }
+
+      .demo-section h2 {
+        margin-bottom: 1.5rem;
+        font-size: 1.5rem;
+        color: #333;
+      }
+
+      body.dark .demo-section h2 {
+        color: #fff;
+      }
+
+      .demo-area {
+        border: 2px dashed #ccc;
+        border-radius: 8px;
+        padding: 3rem;
+        text-align: center;
+        background: #fafafa;
+        min-height: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      body.dark .demo-area {
+        background: #1a1a1a;
+        border-color: #444;
+      }
+
+      .demo-instruction {
+        font-size: 1.1rem;
+        color: #666;
+        margin-bottom: 1rem;
+      }
+
+      body.dark .demo-instruction {
+        color: #aaa;
+      }
+
+      .selected-item {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #0066cc;
+        min-height: 2rem;
+      }
+
+      body.dark .selected-item {
+        color: #66b3ff;
+      }
+
+      .code-block {
+        background: #f0f0f0;
+        border-left: 4px solid #0066cc;
+        padding: 1rem;
+        border-radius: 4px;
+        overflow-x: auto;
+        margin-top: 1rem;
+      }
+
+      body.dark .code-block {
+        background: #1a1a1a;
+        border-left-color: #66b3ff;
+      }
+
+      code {
+        font-family: "Courier New", Courier, monospace;
+        font-size: 0.9rem;
+        color: #333;
+      }
+
+      body.dark code {
+        color: #aaa;
+      }
+
+      .info-box {
+        background: #e3f2fd;
+        border-left: 4px solid #0066cc;
+        padding: 1rem;
+        border-radius: 4px;
+        margin-top: 1rem;
+      }
+
+      body.dark .info-box {
+        background: #1a3a52;
+        border-left-color: #66b3ff;
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 3rem;
+        color: #999;
+        font-size: 0.9rem;
+      }
+
+      body.dark footer {
+        color: #666;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <header>
+        <h1>🎯 Prediction Cone Menu</h1>
+        <p class="subtitle">
+          Production-ready TypeScript library for radial menus with
+          pointer-direction based selection
+        </p>
+      </header>
+
+      <div class="controls">
+        <button id="themeToggle">🌓 Toggle Dark Mode</button>
+        <button id="triggerSelectToggle">📌 Trigger: pointerdown (click to change)</button>
+      </div>
+
+      <div class="demo-section">
+        <h2>Interactive Demo</h2>
+        <p class="demo-instruction" id="instruction">
+          Right-click in the area below to open the menu →
+        </p>
+        <div class="demo-area" id="demoArea">
+          <div>
+            <p>Right-click here to open the menu</p>
+            <div class="selected-item" id="selectedDisplay">
+              (no item selected yet)
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo-section">
+        <h2>Quick Start Code</h2>
+        <p>
+          Here's how to use the Prediction Cone Menu in your own project:
+        </p>
+        <div class="code-block">
+          <code>
+            <pre>import { createPredictionConeMenu } from 'prediction-cone';
+
+// Create menu instance
+const menu = createPredictionConeMenu({
+  items: [
+    { id: 'home', label: '🏠 Home' },
+    { id: 'profile', label: '👤 Profile' },
+    { id: 'settings', label: '⚙️ Settings' },
+    { id: 'logout', label: '🚪 Logout' },
+  ],
+  ringRadius: 120,
+  itemSize: 60,
+  coneHalfAngleDeg: 22.5,
+  deadzone: 30,
+});
+
+// Attach to an element or document
+menu.attach(document);
+
+// Handle selection
+menu.on('select', (e) => {
+  console.log('Selected:', e.item?.label);
+});
+
+// Open programmatically
+menu.openAt(window.innerWidth / 2, window.innerHeight / 2);</pre>
+          </code>
+        </div>
+      </div>
+
+      <div class="demo-section">
+        <h2>API Overview</h2>
+        <div class="info-box">
+          <strong>Methods:</strong>
+          <ul style="margin-left: 1rem; margin-top: 0.5rem">
+            <li><code>attach(element, options?)</code> — Attach menu to DOM element</li>
+            <li><code>openAt(x, y, context?)</code> — Open menu at screen coordinates</li>
+            <li><code>close()</code> — Close the menu</li>
+            <li><code>setItems(items)</code> — Update menu items</li>
+            <li><code>on(event, handler)</code> — Listen to events (open, close, change, select)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="demo-section">
+        <h2>Theming</h2>
+        <p>
+          The menu uses CSS custom properties for styling. You can customize colors,
+          borders, shadows, and more. Open the browser DevTools to inspect the
+          <code>--pcm-*</code> variables.
+        </p>
+        <div class="info-box" style="margin-top: 0.5rem">
+          <strong>Available CSS variables:</strong>
+          <ul style="margin-left: 1rem; margin-top: 0.5rem">
+            <li><code>--pcm-bg</code> — Item background color</li>
+            <li><code>--pcm-text</code> — Text color</li>
+            <li><code>--pcm-activeBg</code> — Active item background</li>
+            <li><code>--pcm-activeText</code> — Active item text color</li>
+            <li><code>--pcm-border</code> — Border color</li>
+            <li><code>--pcm-shadow</code> — Box shadow</li>
+          </ul>
+        </div>
+      </div>
+
+      <footer>
+        <p>
+          Built with ❤️ using TypeScript and Bun.
+          <br />
+          <a href="https://github.com/Pavlusha311245/prediction-cone" style="color: #0066cc"
+            >View on GitHub</a
+          >
+        </p>
+      </footer>
+    </div>
+
+    <!-- Import the library from dist/ -->
+    <script type="module">
+      import { createPredictionConeMenu } from '../../dist/index.mjs';
+
+      // Menu configuration
+      const menuItems = [
+        { id: 'home', label: '🏠 Home', icon: '📍' },
+        { id: 'profile', label: '👤 Profile' },
+        { id: 'settings', label: '⚙️ Settings' },
+        { id: 'help', label: '❓ Help' },
+        { id: 'logout', label: '🚪 Logout' },
+      ];
+
+      // Create menu instance
+      const menu = createPredictionConeMenu({
+        items: menuItems,
+        ringRadius: 120,
+        itemSize: 56,
+        coneHalfAngleDeg: 22.5,
+        deadzone: 30,
+        container: document.getElementById('demoArea'),
+        theme: 'light',
+        showViz: false, // Set to true to see debug canvas
+      });
+
+      // Attach menu to the demo area
+      menu.attach(document.getElementById('demoArea'), {
+        trigger: 'contextmenu',
+      });
+
+      // Handle selection event
+      menu.on('select', (e) => {
+        const display = document.getElementById('selectedDisplay');
+        if (e.item) {
+          display.textContent = `✓ Selected: ${e.item.label}`;
+          display.style.color = '#00aa00';
+          setTimeout(() => {
+            display.textContent = '(no item selected yet)';
+            display.style.color = '#0066cc';
+          }, 2000);
+        }
+      });
+
+      // Theme toggle
+      const themeToggle = document.getElementById('themeToggle');
+      const isDark = localStorage.getItem('pcm-dark-theme') === 'true';
+      if (isDark) {
+        document.body.classList.add('dark');
+        themeToggle.textContent = '☀️ Toggle Light Mode';
+      }
+
+      themeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark');
+        const isDarkNow = document.body.classList.contains('dark');
+        localStorage.setItem('pcm-dark-theme', isDarkNow);
+        themeToggle.textContent = isDarkNow ? '☀️ Toggle Light Mode' : '🌓 Toggle Dark Mode';
+
+        // Update menu theme
+        menu.setOptions({
+          theme: isDarkNow ? 'dark' : 'light',
+        });
+      });
+
+      // Trigger mode toggle
+      const triggerToggle = document.getElementById('triggerSelectToggle');
+      let currentTrigger = 'contextmenu';
+
+      triggerToggle.addEventListener('click', () => {
+        currentTrigger = currentTrigger === 'contextmenu' ? 'pointerdown' : 'contextmenu';
+
+        // Detach with old trigger and reattach with new
+        menu.detach();
+        menu.attach(document.getElementById('demoArea'), {
+          trigger: currentTrigger,
+        });
+
+        const triggerLabel =
+          currentTrigger === 'contextmenu' ? '📌 right-click' : '🖱️ left-click';
+        triggerToggle.textContent = `${triggerLabel} (click to change)`;
+        document.getElementById('instruction').textContent =
+          `${triggerLabel} in the area below to open the menu →`;
+      });
+    </script>
+  </body>
+</html>
+
