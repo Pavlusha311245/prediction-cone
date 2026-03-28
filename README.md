@@ -3,7 +3,7 @@
 [![npm version](https://img.shields.io/npm/v/prediction-cone)](https://www.npmjs.com/package/prediction-cone)
 [![bundle size](https://img.shields.io/bundlephobia/minzip/prediction-cone)](https://bundlephobia.com/package/prediction-cone)
 [![license](https://img.shields.io/npm/l/prediction-cone)](./LICENSE)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)
+![TypeScript](https://img.shields.io/badge/TypeScript-6.0-blue)
 
 A **zero-dependency** TypeScript radial menu that selects items by **pointer direction** within a configurable angular cone.
 

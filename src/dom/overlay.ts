@@ -179,7 +179,8 @@ export class DOMOverlay {
 
       itemEl.style.left = `${x}px`;
       itemEl.style.top = `${y}px`;
-      itemEl.style.width = `${itemSize}px`;
+      itemEl.style.width = "auto";
+      itemEl.style.minWidth = `${itemSize}px`;
       itemEl.style.height = `${itemSize}px`;
     }
   }

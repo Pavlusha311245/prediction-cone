@@ -1,397 +1,651 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Prediction Cone Menu — Vanilla Example</title>
+    <title>Prediction Cone — Radial Menu Library</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
     <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
+      *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+      :root {
+        --bg:            #ffffff;
+        --bg-subtle:     #f5f5f8;
+        --bg-code:       #0d1117;
+        --text:          #111118;
+        --text-muted:    #6b7280;
+        --accent:        #5b21b6;
+        --accent-hover:  #7c3aed;
+        --accent-subtle: #ede9fe;
+        --accent-text:   #7c3aed;
+        --border:        #e4e4e7;
+        --border-code:   #21262d;
+        --radius:        8px;
       }
+
+      [data-theme="dark"] {
+        --bg:            #09090d;
+        --bg-subtle:     #111118;
+        --bg-code:       #0d1117;
+        --text:          #f4f4f8;
+        --text-muted:    #71717a;
+        --accent:        #7c3aed;
+        --accent-hover:  #8b5cf6;
+        --accent-subtle: #1e1533;
+        --accent-text:   #a78bfa;
+        --border:        #1e1e26;
+        --border-code:   #21262d;
+      }
+
+      html { scroll-behavior: smooth; }
 
       body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-          "Helvetica Neue", Arial, sans-serif;
-        background: #f5f5f5;
-        transition: background-color 0.3s ease, color 0.3s ease;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition: background 0.2s, color 0.2s;
       }
 
-      body.dark {
-        background: #1a1a1a;
-        color: #e0e0e0;
+      /* ── Nav ─────────────────────────────────────── */
+      nav {
+        position: sticky; top: 0; z-index: 50;
+        height: 54px;
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 0 1.5rem;
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        background: color-mix(in srgb, var(--bg) 80%, transparent);
+        border-bottom: 1px solid var(--border);
+        transition: background 0.2s, border-color 0.2s;
       }
 
-      .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 2rem;
+      .nav-logo {
+        display: flex; align-items: center; gap: 0.5rem;
+        font-weight: 600; font-size: 0.9rem;
+        color: var(--text); text-decoration: none;
+        letter-spacing: -0.01em;
       }
 
-      header {
-        text-align: center;
-        margin-bottom: 3rem;
+      .nav-logo-mark {
+        width: 26px; height: 26px;
+        background: var(--accent);
+        border-radius: 6px;
+        display: grid; place-items: center;
+        font-size: 13px; flex-shrink: 0;
+      }
+
+      .nav-right { display: flex; align-items: center; gap: 0.75rem; }
+
+      .nav-link {
+        font-size: 0.85rem; color: var(--text-muted);
+        text-decoration: none; transition: color 0.15s;
+      }
+      .nav-link:hover { color: var(--text); }
+
+      .icon-btn {
+        width: 34px; height: 34px;
+        border: 1px solid var(--border); border-radius: 6px;
+        background: transparent; cursor: pointer;
+        display: grid; place-items: center;
+        font-size: 15px; color: var(--text-muted);
+        transition: color 0.15s, border-color 0.15s, background 0.15s;
+      }
+      .icon-btn:hover {
+        color: var(--text); border-color: var(--accent);
+        background: var(--accent-subtle);
+      }
+
+      /* ── Hero ────────────────────────────────────── */
+      .hero {
+        max-width: 760px; margin: 0 auto;
+        padding: 5rem 1.5rem 4rem;
+        text-align: center; position: relative; overflow: hidden;
+      }
+
+      .hero-grid {
+        position: absolute; inset: 0;
+        background-image: radial-gradient(var(--border) 1px, transparent 1px);
+        background-size: 22px 22px;
+        mask-image: radial-gradient(ellipse 65% 55% at 50% 0%, black, transparent);
+        -webkit-mask-image: radial-gradient(ellipse 65% 55% at 50% 0%, black, transparent);
+        pointer-events: none;
+      }
+
+      .hero-badge {
+        display: inline-flex; align-items: center; gap: 0.4rem;
+        padding: 0.2rem 0.7rem;
+        border: 1px solid var(--accent-text); border-radius: 999px;
+        font-size: 0.72rem; font-weight: 500;
+        letter-spacing: 0.05em; text-transform: uppercase;
+        color: var(--accent-text); background: var(--accent-subtle);
+        margin-bottom: 1.5rem;
       }
 
       h1 {
-        font-size: 2.5rem;
-        margin-bottom: 0.5rem;
-        color: #333;
-      }
-
-      body.dark h1 {
-        color: #fff;
-      }
-
-      .subtitle {
-        font-size: 1.1rem;
-        color: #666;
-      }
-
-      body.dark .subtitle {
-        color: #aaa;
-      }
-
-      .controls {
-        display: flex;
-        gap: 1rem;
-        justify-content: center;
-        margin-bottom: 3rem;
-        flex-wrap: wrap;
-      }
-
-      button {
-        padding: 0.75rem 1.5rem;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 1rem;
-        transition: all 0.2s ease;
-        background: #0066cc;
-        color: white;
-      }
-
-      button:hover {
-        background: #0052a3;
-        transform: translateY(-2px);
-      }
-
-      button.active {
-        background: #333;
-      }
-
-      body.dark button.active {
-        background: #fff;
-        color: #1a1a1a;
-      }
-
-      .demo-section {
-        background: white;
-        border-radius: 8px;
-        padding: 2rem;
-        margin-bottom: 2rem;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      }
-
-      body.dark .demo-section {
-        background: #2a2a2a;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-      }
-
-      .demo-section h2 {
-        margin-bottom: 1.5rem;
-        font-size: 1.5rem;
-        color: #333;
-      }
-
-      body.dark .demo-section h2 {
-        color: #fff;
-      }
-
-      .demo-area {
-        border: 2px dashed #ccc;
-        border-radius: 8px;
-        padding: 3rem;
-        text-align: center;
-        background: #fafafa;
-        min-height: 300px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      body.dark .demo-area {
-        background: #1a1a1a;
-        border-color: #444;
-      }
-
-      .demo-instruction {
-        font-size: 1.1rem;
-        color: #666;
+        font-size: clamp(2rem, 5vw, 3.25rem);
+        font-weight: 700; line-height: 1.15;
+        letter-spacing: -0.03em; color: var(--text);
         margin-bottom: 1rem;
       }
 
-      body.dark .demo-instruction {
-        color: #aaa;
+      .hero-desc {
+        font-size: 1.05rem; color: var(--text-muted);
+        max-width: 500px; margin: 0 auto 2.5rem;
       }
 
-      .selected-item {
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: #0066cc;
-        min-height: 2rem;
+      .hero-actions {
+        display: flex; align-items: center;
+        justify-content: center; gap: 0.625rem; flex-wrap: wrap;
       }
 
-      body.dark .selected-item {
-        color: #66b3ff;
+      .btn {
+        display: inline-flex; align-items: center; gap: 0.4rem;
+        padding: 0.55rem 1.15rem; border-radius: 6px;
+        font-size: 0.875rem; font-weight: 500;
+        cursor: pointer; text-decoration: none; font-family: inherit;
+        transition: background 0.15s, border-color 0.15s, transform 0.1s, color 0.15s;
+        border: 1px solid transparent;
+      }
+      .btn:active { transform: translateY(0) !important; }
+
+      .btn-fill { background: var(--accent); color: #fff; }
+      .btn-fill:hover { background: var(--accent-hover); transform: translateY(-1px); }
+
+      .btn-outline {
+        border-color: var(--border); color: var(--text-muted);
+        background: transparent;
+        font-family: 'JetBrains Mono', monospace; font-size: 0.82rem;
+      }
+      .btn-outline:hover {
+        border-color: var(--accent); color: var(--accent-text);
+        background: var(--accent-subtle); transform: translateY(-1px);
       }
 
+      /* ── Layout ──────────────────────────────────── */
+      main { max-width: 860px; margin: 0 auto; padding: 0 1.5rem 6rem; }
+
+      .section { margin-bottom: 4.5rem; }
+
+      .section-eyebrow {
+        font-size: 0.72rem; font-weight: 600;
+        letter-spacing: 0.08em; text-transform: uppercase;
+        color: var(--accent-text); margin-bottom: 0.35rem;
+      }
+
+      .section-title {
+        font-size: 1.4rem; font-weight: 600;
+        letter-spacing: -0.02em; margin-bottom: 0.6rem;
+      }
+
+      .section-desc { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.25rem; }
+
+      /* ── Demo ────────────────────────────────────── */
+      .demo-frame {
+        border: 1px solid var(--border); border-radius: 10px;
+        overflow: hidden; transition: border-color 0.2s;
+      }
+
+      .demo-titlebar {
+        background: var(--bg-subtle); border-bottom: 1px solid var(--border);
+        padding: 0.6rem 0.875rem;
+        display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;
+        transition: background 0.2s, border-color 0.2s;
+      }
+
+      .dots { display: flex; gap: 5px; }
+      .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); }
+      .dot:nth-child(1) { background: #ff5f57; }
+      .dot:nth-child(2) { background: #febc2e; }
+      .dot:nth-child(3) { background: #28c840; }
+
+      .trigger-chip {
+        font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;
+        color: var(--text-muted); background: transparent;
+        border: 1px solid var(--border); border-radius: 4px;
+        padding: 0.2rem 0.55rem; cursor: pointer;
+        transition: color 0.15s, border-color 0.15s;
+      }
+      .trigger-chip:hover { color: var(--accent-text); border-color: var(--accent); }
+
+      /* ── PM switcher ─────────────────────────────── */
+      .pm-block {
+        border: 1px solid var(--border-code); border-radius: 10px;
+        overflow: hidden; font-family: 'JetBrains Mono', 'SF Mono', monospace;
+        margin-top: 0.5rem;
+      }
+
+      .pm-tabs {
+        background: #161b22; border-bottom: 1px solid var(--border-code);
+        padding: 0 1rem;
+        display: flex; align-items: center; gap: 0;
+      }
+
+      .pm-tab {
+        font-size: 0.72rem; color: #8b949e; background: transparent;
+        border: none; border-bottom: 2px solid transparent;
+        padding: 0.5rem 0.75rem; cursor: pointer;
+        font-family: inherit; transition: color 0.15s, border-color 0.15s;
+        margin-bottom: -1px;
+      }
+      .pm-tab:hover { color: #f0f6fc; }
+      .pm-tab.active { color: #f0f6fc; border-bottom-color: var(--accent-text, #a78bfa); }
+
+      .pm-copy-btn {
+        margin-left: auto; font-size: 0.72rem; color: #8b949e; background: transparent;
+        border: 1px solid #30363d; border-radius: 4px;
+        padding: 0.2rem 0.5rem; cursor: pointer; font-family: inherit;
+        transition: color 0.15s, border-color 0.15s; align-self: center;
+      }
+      .pm-copy-btn:hover { color: #f0f6fc; border-color: #6e7681; }
+
+      .pm-line {
+        background: var(--bg-code); padding: 0.875rem 1.5rem;
+        font-size: 0.85rem; line-height: 1.5; color: #c9d1d9;
+        display: none;
+      }
+      .pm-line.active { display: block; }
+
+      .pm-line .tc { color: #8b949e; }
+      .pm-line .ts { color: #a5d6ff; }
+
+      .demo-body {
+        min-height: 280px;
+        display: flex; align-items: center; justify-content: center;
+        background: var(--bg); cursor: context-menu;
+        user-select: none; transition: background 0.2s;
+      }
+      .demo-body:hover { background: var(--bg-subtle); }
+
+      .demo-inner { text-align: center; pointer-events: none; }
+
+      .demo-hint { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; }
+
+      .demo-result {
+        font-size: 1.05rem; font-weight: 600;
+        color: var(--text-muted); min-height: 1.6rem; transition: color 0.25s;
+      }
+      .demo-result.active { color: var(--accent-text); }
+
+      /* ── Code block ──────────────────────────────── */
       .code-block {
-        background: #f0f0f0;
-        border-left: 4px solid #0066cc;
-        padding: 1rem;
-        border-radius: 4px;
-        overflow-x: auto;
-        margin-top: 1rem;
+        border: 1px solid var(--border-code); border-radius: 10px;
+        overflow: hidden;
+        font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
       }
 
-      body.dark .code-block {
-        background: #1a1a1a;
-        border-left-color: #66b3ff;
+      .code-topbar {
+        background: #161b22; border-bottom: 1px solid var(--border-code);
+        padding: 0.5rem 1rem;
+        display: flex; align-items: center; justify-content: space-between;
       }
 
-      code {
-        font-family: "Courier New", Courier, monospace;
-        font-size: 0.9rem;
-        color: #333;
+      .code-fname { font-size: 0.72rem; color: #8b949e; font-family: inherit; }
+
+      .copy-btn {
+        font-size: 0.72rem; color: #8b949e; background: transparent;
+        border: 1px solid #30363d; border-radius: 4px;
+        padding: 0.2rem 0.5rem; cursor: pointer; font-family: inherit;
+        transition: color 0.15s, border-color 0.15s;
+      }
+      .copy-btn:hover { color: #f0f6fc; border-color: #6e7681; }
+
+      .code-scroll { background: var(--bg-code); padding: 1.25rem 1.5rem; overflow-x: auto; }
+
+      .code-scroll pre {
+        margin: 0; font-size: 0.83rem; line-height: 1.75;
+        color: #c9d1d9; font-family: inherit;
       }
 
-      body.dark code {
-        color: #aaa;
+      .tk { color: #ff7b72; }
+      .ts { color: #a5d6ff; }
+      .tf { color: #d2a8ff; }
+      .tn { color: #79c0ff; }
+
+      /* ── API list ────────────────────────────────── */
+      .api-list {
+        display: grid; gap: 1px;
+        background: var(--border);
+        border: 1px solid var(--border);
+        border-radius: 10px; overflow: hidden;
       }
 
-      .info-box {
-        background: #e3f2fd;
-        border-left: 4px solid #0066cc;
-        padding: 1rem;
-        border-radius: 4px;
-        margin-top: 1rem;
+      .api-card {
+        background: var(--bg); padding: 0.875rem 1.25rem;
+        display: flex; align-items: baseline; gap: 1.25rem;
+        transition: background 0.15s;
+      }
+      .api-card:hover { background: var(--bg-subtle); }
+
+      .api-sig {
+        font-family: 'JetBrains Mono', monospace; font-size: 0.82rem;
+        color: var(--accent-text); white-space: nowrap; flex-shrink: 0;
       }
 
-      body.dark .info-box {
-        background: #1a3a52;
-        border-left-color: #66b3ff;
+      .api-card p { font-size: 0.875rem; color: var(--text-muted); }
+
+      .api-card p code {
+        font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;
+        background: var(--accent-subtle); color: var(--accent-text);
+        padding: 0.05rem 0.3rem; border-radius: 3px;
       }
 
+      /* ── CSS var chips ───────────────────────────── */
+      .var-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+        gap: 0.5rem;
+      }
+
+      .var-chip {
+        border: 1px solid var(--border); border-radius: 8px;
+        padding: 0.75rem 1rem; background: var(--bg-subtle);
+        transition: border-color 0.15s;
+      }
+      .var-chip:hover { border-color: var(--accent); }
+
+      .var-name {
+        font-family: 'JetBrains Mono', monospace; font-size: 0.78rem;
+        color: var(--accent-text); margin-bottom: 0.25rem;
+      }
+      .var-desc { font-size: 0.8rem; color: var(--text-muted); }
+
+      /* ── Footer ──────────────────────────────────── */
       footer {
-        text-align: center;
-        margin-top: 3rem;
-        color: #999;
-        font-size: 0.9rem;
+        border-top: 1px solid var(--border);
+        padding: 1.75rem 1.5rem;
+        display: flex; align-items: center;
+        justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;
+        font-size: 0.82rem; color: var(--text-muted);
       }
 
-      body.dark footer {
-        color: #666;
+      footer a {
+        color: var(--text-muted); text-decoration: none; transition: color 0.15s;
       }
+      footer a:hover { color: var(--accent-text); }
     </style>
   </head>
 
   <body>
-    <div class="container">
-      <header>
-        <h1>🎯 Prediction Cone Menu</h1>
-        <p class="subtitle">
-          Production-ready TypeScript library for radial menus with
-          pointer-direction based selection
-        </p>
-      </header>
+    <nav>
+      <a href="#" class="nav-logo">
+        <span class="nav-logo-mark">🎯</span>
+        prediction-cone
+      </a>
+      <div class="nav-right">
+        <a href="https://github.com/Pavlusha311245/prediction-cone" class="nav-link" target="_blank">GitHub</a>
+        <button class="icon-btn" id="themeToggle" title="Toggle theme">🌓</button>
+      </div>
+    </nav>
 
-      <div class="controls">
-        <button id="themeToggle">🌓 Toggle Dark Mode</button>
-        <button id="triggerSelectToggle">📌 Trigger: pointerdown (click to change)</button>
+    <section class="hero">
+      <div class="hero-grid" aria-hidden="true"></div>
+      <div class="hero-badge">v0.1 · TypeScript · Zero deps</div>
+      <h1>Radial menus that predict<br />where you're going</h1>
+      <p class="hero-desc">
+        Open a context menu and select items by moving your pointer in a direction —
+        not by hovering over them. Faster than any dropdown.
+      </p>
+      <div class="hero-actions">
+        <a href="#demo" class="btn btn-fill">Try the demo →</a>
+        <a href="#quickstart" class="btn btn-outline">Quick start</a>
       </div>
 
-      <div class="demo-section">
-        <h2>Interactive Demo</h2>
-        <p class="demo-instruction" id="instruction">
-          Right-click in the area below to open the menu →
+      <div class="pm-block" style="margin-top: 2rem; text-align: left; max-width: 420px; margin-left: auto; margin-right: auto;">
+        <div class="pm-tabs">
+          <button class="pm-tab active" data-pm="npm">npm</button>
+          <button class="pm-tab" data-pm="yarn">yarn</button>
+          <button class="pm-tab" data-pm="pnpm">pnpm</button>
+          <button class="pm-tab" data-pm="bun">bun</button>
+          <button class="pm-copy-btn" id="installCopy">Copy</button>
+        </div>
+        <div class="pm-line active" data-pm="npm"><span class="tc">$</span> npm <span class="ts">install</span> prediction-cone</div>
+        <div class="pm-line" data-pm="yarn"><span class="tc">$</span> yarn <span class="ts">add</span> prediction-cone</div>
+        <div class="pm-line" data-pm="pnpm"><span class="tc">$</span> pnpm <span class="ts">add</span> prediction-cone</div>
+        <div class="pm-line" data-pm="bun"><span class="tc">$</span> bun <span class="ts">add</span> prediction-cone</div>
+      </div>
+    </section>
+
+    <main>
+
+      <div class="section" id="demo">
+        <div class="section-eyebrow">Interactive</div>
+        <h2 class="section-title">See it in action</h2>
+        <p class="section-desc" id="instruction">
+          Click inside the area below, then move your pointer in any direction.
         </p>
-        <div class="demo-area" id="demoArea">
-          <div>
-            <p>Right-click here to open the menu</p>
-            <div class="selected-item" id="selectedDisplay">
-              (no item selected yet)
+        <div class="demo-frame">
+          <div class="demo-titlebar">
+            <div class="dots">
+              <div class="dot"></div>
+              <div class="dot"></div>
+              <div class="dot"></div>
+            </div>
+            <button class="trigger-chip" id="triggerSelectToggle">trigger: pointerdown</button>
+          </div>
+          <div class="demo-body" id="demoArea" style="cursor: pointer;">
+            <div class="demo-inner">
+              <p class="demo-hint">Move your pointer after opening to select</p>
+              <div class="demo-result" id="selectedDisplay">—</div>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="demo-section">
-        <h2>Quick Start Code</h2>
-        <p>
-          Here's how to use the Prediction Cone Menu in your own project:
-        </p>
+      <div class="section" id="quickstart">
+        <div class="section-eyebrow">Getting started</div>
+        <h2 class="section-title">Quick start</h2>
         <div class="code-block">
-          <code>
-            <pre>import { createPredictionConeMenu } from 'prediction-cone';
+          <div class="code-topbar">
+            <span class="code-fname">main.ts</span>
+            <button class="copy-btn" id="copyBtn">Copy</button>
+          </div>
+          <div class="code-scroll">
+            <pre><span class="tk">import</span> { createPredictionConeMenu } <span class="tk">from</span> <span class="ts">'prediction-cone'</span>;
 
-// Create menu instance
-const menu = createPredictionConeMenu({
+<span class="tk">const</span> menu = <span class="tf">createPredictionConeMenu</span>({
   items: [
-    { id: 'home', label: '🏠 Home' },
-    { id: 'profile', label: '👤 Profile' },
-    { id: 'settings', label: '⚙️ Settings' },
-    { id: 'logout', label: '🚪 Logout' },
+    { id: <span class="ts">'home'</span>,     label: <span class="ts">'🏠 Home'</span>     },
+    { id: <span class="ts">'profile'</span>,  label: <span class="ts">'👤 Profile'</span>  },
+    { id: <span class="ts">'settings'</span>, label: <span class="ts">'⚙️ Settings'</span> },
+    { id: <span class="ts">'logout'</span>,   label: <span class="ts">'🚪 Logout'</span>   },
   ],
-  ringRadius: 120,
-  itemSize: 60,
-  coneHalfAngleDeg: 22.5,
-  deadzone: 30,
+  ringRadius:       <span class="tn">120</span>,
+  itemSize:         <span class="tn">60</span>,
+  coneHalfAngleDeg: <span class="tn">22.5</span>,
+  deadzone:         <span class="tn">30</span>,
 });
 
-// Attach to an element or document
-menu.attach(document);
+menu.<span class="tf">attach</span>(document);
 
-// Handle selection
-menu.on('select', (e) => {
-  console.log('Selected:', e.item?.label);
-});
-
-// Open programmatically
-menu.openAt(window.innerWidth / 2, window.innerHeight / 2);</pre>
-          </code>
+menu.<span class="tf">on</span>(<span class="ts">'select'</span>, (e) => {
+  console.<span class="tf">log</span>(<span class="ts">'Selected:'</span>, e.item?.label);
+});</pre>
+          </div>
         </div>
       </div>
 
-      <div class="demo-section">
-        <h2>API Overview</h2>
-        <div class="info-box">
-          <strong>Methods:</strong>
-          <ul style="margin-left: 1rem; margin-top: 0.5rem">
-            <li><code>attach(element, options?)</code> — Attach menu to DOM element</li>
-            <li><code>openAt(x, y, context?)</code> — Open menu at screen coordinates</li>
-            <li><code>close()</code> — Close the menu</li>
-            <li><code>setItems(items)</code> — Update menu items</li>
-            <li><code>on(event, handler)</code> — Listen to events (open, close, change, select)</li>
-          </ul>
+      <div class="section" id="api">
+        <div class="section-eyebrow">Reference</div>
+        <h2 class="section-title">API</h2>
+        <div class="api-list">
+          <div class="api-card">
+            <span class="api-sig">.attach(element, options?)</span>
+            <p>Attach to a DOM element. Opens on the configured trigger event.</p>
+          </div>
+          <div class="api-card">
+            <span class="api-sig">.detach()</span>
+            <p>Remove all event listeners previously added by <code>.attach()</code>.</p>
+          </div>
+          <div class="api-card">
+            <span class="api-sig">.openAt(x, y, ctx?)</span>
+            <p>Open the menu programmatically at given viewport coordinates.</p>
+          </div>
+          <div class="api-card">
+            <span class="api-sig">.close()</span>
+            <p>Dismiss the menu without firing a <code>select</code> event.</p>
+          </div>
+          <div class="api-card">
+            <span class="api-sig">.setItems(items)</span>
+            <p>Replace the item list at runtime without re-creating the menu.</p>
+          </div>
+          <div class="api-card">
+            <span class="api-sig">.on(event, handler)</span>
+            <p>Subscribe to <code>open</code>, <code>close</code>, <code>change</code>, or <code>select</code> events.</p>
+          </div>
         </div>
       </div>
 
-      <div class="demo-section">
-        <h2>Theming</h2>
-        <p>
-          The menu uses CSS custom properties for styling. You can customize colors,
-          borders, shadows, and more. Open the browser DevTools to inspect the
-          <code>--pcm-*</code> variables.
-        </p>
-        <div class="info-box" style="margin-top: 0.5rem">
-          <strong>Available CSS variables:</strong>
-          <ul style="margin-left: 1rem; margin-top: 0.5rem">
-            <li><code>--pcm-bg</code> — Item background color</li>
-            <li><code>--pcm-text</code> — Text color</li>
-            <li><code>--pcm-activeBg</code> — Active item background</li>
-            <li><code>--pcm-activeText</code> — Active item text color</li>
-            <li><code>--pcm-border</code> — Border color</li>
-            <li><code>--pcm-shadow</code> — Box shadow</li>
-          </ul>
+      <div class="section" id="theming">
+        <div class="section-eyebrow">Customization</div>
+        <h2 class="section-title">CSS variables</h2>
+        <p class="section-desc">Set any of these on an ancestor element to theme the menu.</p>
+        <div class="var-grid">
+          <div class="var-chip"><div class="var-name">--pcm-bg</div><div class="var-desc">Item background</div></div>
+          <div class="var-chip"><div class="var-name">--pcm-text</div><div class="var-desc">Item text color</div></div>
+          <div class="var-chip"><div class="var-name">--pcm-activeBg</div><div class="var-desc">Active item background</div></div>
+          <div class="var-chip"><div class="var-name">--pcm-activeText</div><div class="var-desc">Active item text color</div></div>
+          <div class="var-chip"><div class="var-name">--pcm-border</div><div class="var-desc">Border color</div></div>
+          <div class="var-chip"><div class="var-name">--pcm-shadow</div><div class="var-desc">Box shadow</div></div>
         </div>
       </div>
 
-      <footer>
-        <p>
-          Built with ❤️ using TypeScript and Bun.
-          <br />
-          <a href="https://github.com/Pavlusha311245/prediction-cone" style="color: #0066cc"
-            >View on GitHub</a
-          >
-        </p>
-      </footer>
-    </div>
+    </main>
 
-    <!-- Import the library from dist/ -->
+    <footer>
+      <span>prediction-cone · MIT License</span>
+      <a href="https://github.com/Pavlusha311245/prediction-cone" target="_blank">View on GitHub ↗</a>
+    </footer>
+
     <script type="module">
       import { createPredictionConeMenu } from '../../dist/index.mjs';
 
-      // Menu configuration
-      const menuItems = [
-        { id: 'home', label: '🏠 Home', icon: '📍' },
-        { id: 'profile', label: '👤 Profile' },
-        { id: 'settings', label: '⚙️ Settings' },
-        { id: 'help', label: '❓ Help' },
-        { id: 'logout', label: '🚪 Logout' },
-      ];
-
-      // Create menu instance
       const menu = createPredictionConeMenu({
-        items: menuItems,
-        ringRadius: 120,
-        itemSize: 56,
-        coneHalfAngleDeg: 22.5,
-        deadzone: 30,
+        items: [
+          { id: 'home',     label: '🏠 Home'     },
+          { id: 'profile',  label: '👤 Profile'  },
+          { id: 'settings', label: '⚙️ Settings' },
+          { id: 'help',     label: '❓ Help'      },
+          { id: 'logout',   label: '🚪 Logout'   },
+        ],
+        ringRadius: 120, itemSize: 56,
+        coneHalfAngleDeg: 22.5, deadzone: 30,
         container: document.getElementById('demoArea'),
-        theme: 'light',
-        showViz: false, // Set to true to see debug canvas
+        showViz: false,
       });
 
-      // Attach menu to the demo area
-      menu.attach(document.getElementById('demoArea'), {
-        trigger: 'contextmenu',
-      });
+      menu.attach(document.getElementById('demoArea'), { trigger: 'pointerdown' });
 
-      // Handle selection event
       menu.on('select', (e) => {
-        const display = document.getElementById('selectedDisplay');
-        if (e.item) {
-          display.textContent = `✓ Selected: ${e.item.label}`;
-          display.style.color = '#00aa00';
-          setTimeout(() => {
-            display.textContent = '(no item selected yet)';
-            display.style.color = '#0066cc';
-          }, 2000);
-        }
+        const el = document.getElementById('selectedDisplay');
+        if (!e.item) return;
+        el.textContent = `✓ ${e.item.label}`;
+        el.classList.add('active');
+        clearTimeout(el._timer);
+        el._timer = setTimeout(() => {
+          el.textContent = '—';
+          el.classList.remove('active');
+        }, 2500);
       });
 
-      // Theme toggle
-      const themeToggle = document.getElementById('themeToggle');
-      const isDark = localStorage.getItem('pcm-dark-theme') === 'true';
-      if (isDark) {
-        document.body.classList.add('dark');
-        themeToggle.textContent = '☀️ Toggle Light Mode';
+      // Theme
+      const themeBtn = document.getElementById('themeToggle');
+      const saved = localStorage.getItem('pcm-theme');
+
+      function applyTheme(theme) {
+        document.documentElement.dataset.theme = theme;
+        themeBtn.textContent = theme === 'dark' ? '☀️' : '🌓';
+        localStorage.setItem('pcm-theme', theme);
+        menu.setOptions?.({ theme });
       }
 
-      themeToggle.addEventListener('click', () => {
-        document.body.classList.toggle('dark');
-        const isDarkNow = document.body.classList.contains('dark');
-        localStorage.setItem('pcm-dark-theme', isDarkNow);
-        themeToggle.textContent = isDarkNow ? '☀️ Toggle Light Mode' : '🌓 Toggle Dark Mode';
+      if (saved) applyTheme(saved);
 
-        // Update menu theme
-        menu.setOptions({
-          theme: isDarkNow ? 'dark' : 'light',
-        });
+      themeBtn.addEventListener('click', () => {
+        applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
       });
 
-      // Trigger mode toggle
-      const triggerToggle = document.getElementById('triggerSelectToggle');
-      let currentTrigger = 'contextmenu';
+      // Trigger toggle
+      let trigger = 'pointerdown';
+      const chipBtn = document.getElementById('triggerSelectToggle');
+      const instr = document.getElementById('instruction');
 
-      triggerToggle.addEventListener('click', () => {
-        currentTrigger = currentTrigger === 'contextmenu' ? 'pointerdown' : 'contextmenu';
-
-        // Detach with old trigger and reattach with new
+      chipBtn.addEventListener('click', () => {
+        trigger = trigger === 'contextmenu' ? 'pointerdown' : 'contextmenu';
         menu.detach();
-        menu.attach(document.getElementById('demoArea'), {
-          trigger: currentTrigger,
-        });
-
-        const triggerLabel =
-          currentTrigger === 'contextmenu' ? '📌 right-click' : '🖱️ left-click';
-        triggerToggle.textContent = `${triggerLabel} (click to change)`;
-        document.getElementById('instruction').textContent =
-          `${triggerLabel} in the area below to open the menu →`;
+        menu.attach(document.getElementById('demoArea'), { trigger });
+        chipBtn.textContent = `trigger: ${trigger}`;
+        document.getElementById('demoArea').style.cursor = trigger === 'contextmenu' ? 'context-menu' : 'pointer';
+        instr.textContent = trigger === 'contextmenu'
+          ? 'Right-click inside the area below, then move your pointer in any direction.'
+          : 'Click inside the area below, then move your pointer in any direction.';
       });
+
+      // PM switcher
+      const pmCommands = {
+        npm:  'npm install prediction-cone',
+        yarn: 'yarn add prediction-cone',
+        pnpm: 'pnpm add prediction-cone',
+        bun:  'bun add prediction-cone',
+      };
+      let activePm = 'npm';
+
+      document.querySelectorAll('.pm-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          activePm = tab.dataset.pm;
+          document.querySelectorAll('.pm-tab').forEach(t => t.classList.toggle('active', t.dataset.pm === activePm));
+          document.querySelectorAll('.pm-line').forEach(l => l.classList.toggle('active', l.dataset.pm === activePm));
+        });
+      });
+
+      // Copy buttons
+      const codeText = `import { createPredictionConeMenu } from 'prediction-cone';
+
+const menu = createPredictionConeMenu({
+  items: [
+    { id: 'home',     label: '🏠 Home'     },
+    { id: 'profile',  label: '👤 Profile'  },
+    { id: 'settings', label: '⚙️ Settings' },
+    { id: 'logout',   label: '🚪 Logout'   },
+  ],
+  ringRadius: 120, itemSize: 60,
+  coneHalfAngleDeg: 22.5, deadzone: 30,
+});
+
+menu.attach(document);
+menu.on('select', (e) => console.log('Selected:', e.item?.label));`;
+
+      function withFeedback(btn, fn) {
+        btn.addEventListener('click', async () => {
+          await fn();
+          const orig = btn.textContent;
+          btn.textContent = '✓ Copied';
+          setTimeout(() => { btn.textContent = orig; }, 1800);
+        });
+      }
+
+      withFeedback(document.getElementById('copyBtn'),
+        () => navigator.clipboard.writeText(codeText));
+
+      withFeedback(document.getElementById('installCopy'),
+        () => navigator.clipboard.writeText(pmCommands[activePm]));
     </script>
+
+    <!-- Context7 AI chat widget -->
+    <script
+      src="https://context7.com/widget.js"
+      data-library="/pavlusha311245/prediction-cone"
+      data-color="#5b21b6"
+      data-position="bottom-right"
+      data-placeholder="Ask about prediction-cone…"
+      async
+    ></script>
   </body>
 </html>
 
