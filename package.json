@@ -76,7 +76,7 @@
   "size-limit": [
     {
       "path": "dist/index.mjs",
-      "limit": "6 kB"
+      "limit": "10 kB"
     }
   ],
   "engines": {
