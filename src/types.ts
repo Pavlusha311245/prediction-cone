@@ -29,6 +29,15 @@ export interface ConeItem {
   /** Optional: whether the item is disabled (cannot be selected) */
   disabled?: boolean;
 
+  /** Optional: render as a visual separator (ignores all other fields) */
+  separator?: boolean;
+
+  /** Optional: mark item as destructive/danger (renders in red) */
+  danger?: boolean;
+
+  /** Optional: keyboard shortcut label to display on the right (e.g. "⌘N") */
+  shortcut?: string;
+
   /**
    * Optional: icon to display. Can be:
    * - A **string** — emoji/text (safe) or an HTML/SVG string (sanitized via allowlist before insertion)
@@ -39,6 +48,14 @@ export interface ConeItem {
    * javascript: URLs are stripped). Only use trusted SVG/HTML from your own codebase.
    */
   icon?: string | HTMLElement | (() => HTMLElement);
+
+  /**
+   * Optional: nested sub-items displayed as a dropdown panel when this item is active.
+   * When set, activating this item opens a submenu instead of selecting it directly.
+   * Triangle-based hover prediction keeps the submenu open while the pointer moves
+   * diagonally from the parent item toward the submenu panel.
+   */
+  children?: ConeItem[];
 }
 
 /**
@@ -282,3 +299,102 @@ export interface ConeMenuInstance {
  * @returns ConeMenuInstance with all public methods
  */
 export type CreatePredictionConeMenu = (options: ConeOptions) => ConeMenuInstance;
+
+// ─── Dropdown Menu ───────────────────────────────────────────────────────────
+
+/**
+ * Configuration options for the dropdown menu with triangle submenu navigation
+ */
+export interface DropdownMenuOptions {
+  /** Menu items to display. Items with `children` show a nested submenu on hover. */
+  items: ConeItem[];
+
+  /** Optional: theme (light, dark, or custom CSS variables object)
+   * Default: "light"
+   */
+  theme?: "light" | "dark" | Record<string, string>;
+
+  /** Optional: DOM element to mount the menu into
+   * Default: document.body
+   */
+  container?: HTMLElement;
+
+  /**
+   * Enable safe-triangle debug overlay.  When `true`, a fullscreen fixed
+   * `<canvas>` renders the triangle, submenu rect, and apex dot in real time.
+   *
+   * **DEVELOPMENT ONLY** — do not ship with `debug: true`.
+   * Default: false
+   */
+  debug?: boolean;
+
+  /**
+   * Grace period (ms) before the submenu closes when the pointer leaves the
+   * parent row without entering the safe zone.  Prevents accidental closure
+   * during fast diagonal mouse movements that briefly exit the triangle.
+   * Set to `0` to close immediately (no delay).
+   * Default: 150
+   */
+  submenuDelay?: number;
+}
+
+/**
+ * Trigger options for attaching the dropdown to an element
+ */
+export interface DropdownAttachOptions {
+  /** Trigger type
+   * - "click": activate on left click
+   * - "contextmenu": activate on right-click
+   * Default: "click"
+   */
+  trigger?: "click" | "contextmenu";
+
+  /** Whether to call preventDefault() on trigger event. Default: true */
+  preventDefault?: boolean;
+
+  /** Whether to call stopPropagation() on trigger event. Default: false */
+  stopPropagation?: boolean;
+}
+
+/**
+ * Event payload for dropdown menu events
+ */
+export interface DropdownMenuEventPayload {
+  /** The item involved */
+  item?: ConeItem;
+
+  /** The parent item (if this was a submenu selection) */
+  parentItem?: ConeItem;
+}
+
+/**
+ * Public API for the dropdown menu instance
+ */
+export interface DropdownMenuInstance {
+  /** Attach the menu to a trigger element */
+  attach(target: Element | Document, options?: DropdownAttachOptions): void;
+
+  /** Detach the menu from a trigger element (or all) */
+  detach(target?: Element | Document): void;
+
+  /** Open the menu at specific viewport coordinates */
+  openAt(x: number, y: number): void;
+
+  /** Close the menu */
+  close(): void;
+
+  /** Update menu items at runtime */
+  setItems(items: ConeItem[]): void;
+
+  /** Destroy the instance and clean up all resources */
+  destroy(): void;
+
+  /** Check if the menu is currently open */
+  isOpen(): boolean;
+
+  /** Register an event listener. Returns an unsubscribe function. */
+  on(
+    eventName: "open" | "close" | "select",
+    handler: (payload: DropdownMenuEventPayload) => void
+  ): () => void;
+}

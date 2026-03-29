@@ -287,6 +287,40 @@ export function clampItemPosition(
 }
 
 /**
+ * Check if a point (px, py) is inside the triangle defined by vertices (ax, ay), (bx, by), (cx, cy).
+ * Uses the sign-of-cross-product (barycentric) method — no divisions, no sqrt.
+ *
+ * @param px - Test point X
+ * @param py - Test point Y
+ * @param ax - Triangle vertex A X
+ * @param ay - Triangle vertex A Y
+ * @param bx - Triangle vertex B X
+ * @param by - Triangle vertex B Y
+ * @param cx - Triangle vertex C X
+ * @param cy - Triangle vertex C Y
+ * @returns true if point is inside or on the edge of the triangle
+ */
+export function isPointInTriangle(
+  px: number,
+  py: number,
+  ax: number,
+  ay: number,
+  bx: number,
+  by: number,
+  cx: number,
+  cy: number
+): boolean {
+  const d1 = (px - bx) * (ay - by) - (ax - bx) * (py - by);
+  const d2 = (px - cx) * (by - cy) - (bx - cx) * (py - cy);
+  const d3 = (px - ax) * (cy - ay) - (cx - ax) * (py - ay);
+
+  const hasNeg = d1 < 0 || d2 < 0 || d3 < 0;
+  const hasPos = d1 > 0 || d2 > 0 || d3 > 0;
+
+  return !(hasNeg && hasPos);
+}
+
+/**
  * Check if a point is within a distance (deadzone)
  * @param x - Point X
  * @param y - Point Y

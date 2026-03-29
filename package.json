@@ -1,6 +1,6 @@
 {
   "name": "prediction-cone",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Zero-dependency TypeScript radial menu with prediction cone selection — items are chosen by pointer direction within a configurable angular cone",
   "license": "MIT",
   "author": "Pavel Zavadski",
@@ -20,6 +20,9 @@
     "pointer",
     "gesture",
     "menu",
+    "nested-menu",
+    "submenu",
+    "triangle-navigation",
     "ui",
     "typescript",
     "zero-dependency"

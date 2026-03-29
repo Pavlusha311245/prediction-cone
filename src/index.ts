@@ -1,9 +1,8 @@
 /**
  * Prediction Cone Menu Library
  *
- * A production-ready TypeScript library implementing a prediction cone radial menu.
- * Attaches to any DOM element, selects items by pointer direction within a configurable
- * angular cone, with deadzone and hysteresis for stability.
+ * A production-ready TypeScript library implementing a prediction cone radial menu
+ * and a dropdown menu with triangle-based submenu navigation.
  *
  * @module prediction-cone
  */
@@ -11,6 +10,7 @@
 import { PredictionConeMenu } from "./core/menu";
 import { DOMOverlay } from "./dom/overlay";
 import { TriggerManager } from "./dom/trigger";
+import { DropdownMenu } from "./dropdown/menu";
 import type {
   AttachOptions,
   ConeItem,
@@ -18,9 +18,11 @@ import type {
   ConeMenuInstance,
   ConeMenuState,
   ConeOptions,
+  DropdownMenuInstance,
+  DropdownMenuOptions,
 } from "./types";
 
-export const version = "0.1.1";
+export const version = "0.2.0";
 
 /**
  * Internal facade that implements the public ConeMenuInstance interface
@@ -94,7 +96,7 @@ class PredictionConeMenuFacade implements ConeMenuInstance {
 }
 
 /**
- * Create a new prediction cone menu instance
+ * Create a new prediction cone menu instance (radial menu)
  * @param options - Menu configuration options
  * @returns ConeMenuInstance with all public methods
  *
@@ -128,6 +130,44 @@ export function createPredictionConeMenu(options: ConeOptions): ConeMenuInstance
   return new PredictionConeMenuFacade(options);
 }
 
+/**
+ * Create a new dropdown menu with triangle-based submenu navigation
+ *
+ * Items with `children` automatically show a nested submenu panel on hover.
+ * Triangle prediction keeps the submenu open while the pointer moves
+ * diagonally from the parent item toward the submenu.
+ *
+ * @param options - Dropdown menu configuration options
+ * @returns DropdownMenuInstance with all public methods
+ *
+ * @example
+ * ```typescript
+ * const dropdown = createDropdownMenu({
+ *   items: [
+ *     { id: "file", label: "File", children: [
+ *       { id: "new", label: "New" },
+ *       { id: "open", label: "Open" },
+ *       { id: "save", label: "Save" },
+ *     ]},
+ *     { id: "edit", label: "Edit" },
+ *   ],
+ * });
+ *
+ * dropdown.attach(document.getElementById("menu-btn"), { trigger: "contextmenu" });
+ *
+ * dropdown.on("select", ({ item }) => {
+ *   console.log("Selected:", item?.label);
+ * });
+ * ```
+ */
+export function createDropdownMenu(options: DropdownMenuOptions): DropdownMenuInstance {
+  if (!options.items || options.items.length === 0) {
+    throw new Error("DropdownMenuOptions must include at least one item");
+  }
+
+  return new DropdownMenu(options);
+}
+
 // Re-export public types
 export type {
   AttachOptions,
@@ -136,5 +176,12 @@ export type {
   ConeMenuInstance,
   ConeMenuState,
   ConeOptions,
+  DropdownMenuInstance,
+  DropdownMenuOptions,
   Viewport,
 } from "./types";
+export type { PointerSnapshot, PointerVelocity } from "./utils/mouseTracker";
+// Re-export safe-triangle utilities (useful for custom menu implementations)
+export { MouseTracker } from "./utils/mouseTracker";
+export type { Point, SafeTriangleOptions, TriangleVertices } from "./utils/safeTriangle";
+export { SafeTriangle } from "./utils/safeTriangle";

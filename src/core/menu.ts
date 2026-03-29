@@ -370,6 +370,13 @@ export class PredictionConeMenu {
   }
 
   /**
+   * Get all items
+   */
+  getItems(): readonly ConeItem[] {
+    return this.items;
+  }
+
+  /**
    * Get item at index
    */
   getItemAt(index: number): ConeItem | undefined {

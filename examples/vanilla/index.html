@@ -52,14 +52,14 @@
         "url": "https://github.com/Pavlusha311245"
       },
       "license": "https://opensource.org/licenses/MIT",
-      "version": "0.1.1",
+      "version": "0.2.0",
       "keywords": "radial menu, prediction cone, context menu, pie menu, typescript, javascript, zero-dependency",
       "targetProduct": {
         "@type": "SoftwareApplication",
         "name": "prediction-cone",
         "applicationCategory": "DeveloperApplication",
         "operatingSystem": "Any",
-        "softwareVersion": "0.1.1",
+        "softwareVersion": "0.2.0",
         "downloadUrl": "https://www.npmjs.com/package/prediction-cone",
         "offers": {
           "@type": "Offer",
@@ -452,7 +452,7 @@
 
     <section class="hero">
       <div class="hero-grid" aria-hidden="true"></div>
-      <div class="hero-badge">v0.1 · TypeScript · Zero deps</div>
+      <div class="hero-badge">v0.2 · TypeScript · Zero deps</div>
       <h1>Radial menus that predict<br />where you're going</h1>
       <p class="hero-desc">
         Open a context menu and select items by moving your pointer in a direction —
@@ -499,6 +499,31 @@
             <div class="demo-inner">
               <p class="demo-hint">Move your pointer after opening to select</p>
               <div class="demo-result" id="selectedDisplay">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section" id="dropdown-demo">
+        <div class="section-eyebrow">New in v0.2</div>
+        <h2 class="section-title">Dropdown with triangle navigation</h2>
+        <p class="section-desc">
+          Right-click below. Items with children open a submenu — the triangle prediction
+          keeps it open while you move diagonally toward it.
+        </p>
+        <div class="demo-frame">
+          <div class="demo-titlebar">
+            <div class="dots">
+              <div class="dot"></div>
+              <div class="dot"></div>
+              <div class="dot"></div>
+            </div>
+            <span style="font-size: 0.75rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">createDropdownMenu</span>
+          </div>
+          <div class="demo-body" id="dropdownArea" style="cursor: context-menu;">
+            <div class="demo-inner">
+              <p class="demo-hint">Right-click to open the dropdown menu</p>
+              <div class="demo-result" id="dropdownDisplay">—</div>
             </div>
           </div>
         </div>
@@ -566,6 +591,18 @@ menu.<span class="tf">on</span>(<span class="ts">'select'</span>, (e) => {
             <p>Subscribe to <code>open</code>, <code>close</code>, <code>change</code>, or <code>select</code> events.</p>
           </div>
         </div>
+
+        <h3 class="section-title" style="margin-top: 2rem; font-size: 1.15rem;">Dropdown Menu</h3>
+        <div class="api-list" style="margin-top: 0.75rem;">
+          <div class="api-card">
+            <span class="api-sig">createDropdownMenu(options)</span>
+            <p>Create a list-based dropdown with triangle submenu navigation.</p>
+          </div>
+          <div class="api-card">
+            <span class="api-sig">item.children</span>
+            <p>Add nested <code>ConeItem[]</code> to show a submenu with triangle-safe hover prediction.</p>
+          </div>
+        </div>
       </div>
 
       <div class="section" id="theming">
@@ -590,8 +627,9 @@ menu.<span class="tf">on</span>(<span class="ts">'select'</span>, (e) => {
     </footer>
 
     <script type="module">
-      import { createPredictionConeMenu } from '../../dist/index.mjs';
+      import { createPredictionConeMenu, createDropdownMenu } from '../../dist/index.mjs';
 
+      // ── Radial menu demo ───────────────────────────────
       const menu = createPredictionConeMenu({
         items: [
           { id: 'home',     label: '🏠 Home'     },
@@ -612,6 +650,41 @@ menu.<span class="tf">on</span>(<span class="ts">'select'</span>, (e) => {
         const el = document.getElementById('selectedDisplay');
         if (!e.item) return;
         el.textContent = `✓ ${e.item.label}`;
+        el.classList.add('active');
+        clearTimeout(el._timer);
+        el._timer = setTimeout(() => {
+          el.textContent = '—';
+          el.classList.remove('active');
+        }, 2500);
+      });
+
+      // ── Dropdown menu demo ──────────────────────────────
+      const dropdown = createDropdownMenu({
+        items: [
+          { id: 'file', label: 'File', icon: '📁', children: [
+            { id: 'new',    label: 'New File',    icon: '📄' },
+            { id: 'open',   label: 'Open...',     icon: '📂' },
+            { id: 'save',   label: 'Save',        icon: '💾' },
+            { id: 'export', label: 'Export As...', icon: '📤' },
+          ]},
+          { id: 'edit', label: 'Edit', icon: '✏️', children: [
+            { id: 'undo',  label: 'Undo',  icon: '↩️' },
+            { id: 'redo',  label: 'Redo',  icon: '↪️' },
+            { id: 'cut',   label: 'Cut',   icon: '✂️' },
+            { id: 'copy',  label: 'Copy',  icon: '📋' },
+            { id: 'paste', label: 'Paste', icon: '📄' },
+          ]},
+          { id: 'view',   label: 'View',   icon: '👁️' },
+          { id: 'help',   label: 'Help',   icon: '❓' },
+        ],
+      });
+
+      dropdown.attach(document.getElementById('dropdownArea'), { trigger: 'contextmenu' });
+
+      dropdown.on('select', ({ item }) => {
+        const el = document.getElementById('dropdownDisplay');
+        if (!item) return;
+        el.textContent = `✓ ${item.label}`;
         el.classList.add('active');
         clearTimeout(el._timer);
         el._timer = setTimeout(() => {
