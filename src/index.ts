@@ -22,7 +22,7 @@ import type {
   DropdownMenuOptions,
 } from "./types";
 
-export const version = "0.2.0";
+export const VERSION = "0.2.0";
 
 /**
  * Internal facade that implements the public ConeMenuInstance interface

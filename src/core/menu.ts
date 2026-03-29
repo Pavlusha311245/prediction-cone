@@ -78,32 +78,12 @@ export class PredictionConeMenu {
    * Set or update menu options
    */
   setOptions(options: Partial<ConeOptions>): void {
-    if (options.items !== undefined) {
-      this.items = options.items;
-    }
-    if (options.ringRadius !== undefined) {
-      this.ringRadius = options.ringRadius;
-    }
-    if (options.itemSize !== undefined) {
-      this.itemSize = options.itemSize;
-    }
-    if (options.deadzone !== undefined) {
-      this.deadzonePx = options.deadzone;
-    }
-    if (options.coneHalfAngleDeg !== undefined) {
-      this.coneHalfAngleDeg = options.coneHalfAngleDeg;
-    }
-    if (options.hysteresisDeg !== undefined) {
-      this.hysteresisDeg = options.hysteresisDeg;
-    }
-    if (options.startAngleDeg !== undefined) {
-      this.startAngleDeg = options.startAngleDeg;
-    }
-    if (options.edgePadding !== undefined) {
-      this.edgePadding = options.edgePadding;
-    }
-    if (options.preferSafePlacement !== undefined) {
-      this.preferSafePlacement = options.preferSafePlacement;
+    const { deadzone, ...rest } = options;
+
+    Object.assign(this, rest);
+
+    if (deadzone !== undefined) {
+      this.deadzonePx = deadzone;
     }
   }
 

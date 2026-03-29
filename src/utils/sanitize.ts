@@ -3,7 +3,7 @@
  *
  * Uses the built-in HTMLRewriter API — zero extra dependencies,
  * works natively in both browsers and Bun (test environment).
- * Removes script tags, event handlers, and javascript: URLs.
+ * Removes script tags, event handlers, and JavaScript: URLs.
  *
  * @module prediction-cone/utils/sanitize
  */
