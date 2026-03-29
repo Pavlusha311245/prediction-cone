@@ -115,3 +115,107 @@ menu.on('select', (e) => {
 
 See the interactive demo in [`examples/vanilla/index.html`](../examples/vanilla/index.html).
 
+---
+
+## Dropdown Menu (Right-Click)
+
+```typescript
+import { createDropdownMenu } from 'prediction-cone';
+
+const dropdown = createDropdownMenu({
+  items: [
+    { id: 'file', label: 'File', icon: '📁', children: [
+      { id: 'new',    label: 'New File',    icon: '📄', shortcut: '⌘N' },
+      { id: 'open',   label: 'Open...',     icon: '📂', shortcut: '⌘O' },
+      { id: 'save',   label: 'Save',        icon: '💾', shortcut: '⌘S' },
+      { id: 'export', label: 'Export As...', icon: '📤' },
+    ]},
+    { id: 'edit', label: 'Edit', icon: '✏️', children: [
+      { id: 'undo', label: 'Undo', icon: '↩️', shortcut: '⌘Z' },
+      { id: 'redo', label: 'Redo', icon: '↪️', shortcut: '⇧⌘Z' },
+      { id: 'sep1', label: '', separator: true },
+      { id: 'cut',  label: 'Cut',  icon: '✂️', shortcut: '⌘X' },
+      { id: 'copy', label: 'Copy', icon: '📋', shortcut: '⌘C' },
+    ]},
+    { id: 'view',   label: 'View',   icon: '👁️' },
+    { id: 'sep2', label: '', separator: true },
+    { id: 'quit', label: 'Quit', icon: '🚪', danger: true },
+  ],
+});
+
+dropdown.attach(document.getElementById('editor')!, { trigger: 'contextmenu' });
+
+dropdown.on('select', ({ item, parentItem }) => {
+  console.log('Selected:', item?.label, parentItem ? `(from ${parentItem.label})` : '');
+});
+```
+
+## Dropdown with Triangle Debug Overlay
+
+Enable the safe-triangle visualization to see how diagonal pointer movement is predicted:
+
+```typescript
+const dropdown = createDropdownMenu({
+  items: [...],
+  debug: true, // Renders triangle + submenu rect + apex dot in real time
+});
+```
+
+The debug overlay shows:
+- **Blue triangle** — safe zone between cursor and submenu
+- **Green dashed rect** — submenu bounding box
+- **Red dot** — apex (last cursor position on parent row)
+
+> ⚠️ Remove `debug: true` before shipping to production.
+
+## Dropdown with Custom Delay
+
+Adjust how long the submenu stays open after the pointer leaves the safe zone:
+
+```typescript
+const dropdown = createDropdownMenu({
+  items: [...],
+  submenuDelay: 300, // 300ms grace period (default: 150ms)
+});
+```
+
+Set `submenuDelay: 0` to close submenus immediately (no grace period).
+
+## Using SafeTriangle Standalone
+
+Build custom menus with the exported `SafeTriangle` class:
+
+```typescript
+import { SafeTriangle } from 'prediction-cone';
+
+const triangle = new SafeTriangle({
+  delay: 200,
+  padding: 4,
+  debug: true,
+  onExpire: () => {
+    console.log('Pointer did not reach submenu — closing');
+    closeMySubmenu();
+  },
+});
+
+// When submenu opens:
+triangle.activate(
+  { x: cursorX, y: cursorY },       // Apex
+  submenuElement.getBoundingClientRect() // Submenu rect
+);
+
+// On pointermove over parent menu:
+triangle.updateApex({ x: e.clientX, y: e.clientY });
+
+// On pointerenter of another row:
+if (triangle.isInSafeZone(e.clientX, e.clientY)) {
+  return; // Suppress — pointer heading to submenu
+}
+
+// On pointerleave:
+triangle.startExpiry();
+
+// Cleanup:
+triangle.destroy();
+```
+

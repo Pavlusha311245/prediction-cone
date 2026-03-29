@@ -24,6 +24,11 @@ export class DOMOverlay {
   private menuContainer: HTMLElement | null = null;
   private itemElements: Map<string, HTMLElement> = new Map();
   private debugCanvas: HTMLCanvasElement | null = null;
+  private debugCtx: CanvasRenderingContext2D | null = null;
+
+  // Debug canvas resize handling
+  private debugResizeObserver: ResizeObserver | null = null;
+  private readonly boundResizeDebugCanvas: () => void;
 
   // Event handling
   private pointerDownHandler = this.onPointerDown.bind(this);
@@ -44,12 +49,29 @@ export class DOMOverlay {
     this.menu = menu;
     this.options = options;
     this.container = options.container || document.body;
+    this.boundResizeDebugCanvas = this.resizeDebugCanvas.bind(this);
 
     // Inject styles
     injectStyles(options.theme);
 
     // Create DOM (async: icon strings are sanitized via HTMLRewriter)
     this.ready = this.createDOM();
+  }
+
+  /**
+   * Enable or disable the debug visualization canvas at runtime.
+   * Safe to call at any time, including while the menu is open.
+   *
+   * @param enabled - true to show the canvas, false to hide and remove it
+   */
+  setShowViz(enabled: boolean): void {
+    this.options.showViz = enabled;
+    if (enabled && !this.debugCanvas) {
+      this.initDebugCanvas();
+      if (this.menu.isOpen()) this.drawDebugCanvas();
+    } else if (!enabled && this.debugCanvas) {
+      this.destroyDebugCanvas();
+    }
   }
 
   /**
@@ -74,10 +96,7 @@ export class DOMOverlay {
 
     // Create debug canvas if needed
     if (this.options.showViz) {
-      this.debugCanvas = document.createElement("canvas");
-      this.debugCanvas.className = "pcm-debug-canvas";
-      this.debugCanvas.style.display = "none";
-      document.body.appendChild(this.debugCanvas);
+      this.initDebugCanvas();
     }
 
     // Create item elements (icon strings are sanitized async via HTMLRewriter)
@@ -85,6 +104,54 @@ export class DOMOverlay {
 
     // Append to container only after all icons are sanitized
     this.container.appendChild(this.overlay);
+  }
+
+  /**
+   * Create and attach the debug canvas.
+   * Uses DPR-aware sizing and a ResizeObserver to stay in sync with the viewport.
+   */
+  private initDebugCanvas(): void {
+    const canvas = document.createElement("canvas");
+    canvas.className = "pcm-debug-canvas";
+    canvas.setAttribute("aria-hidden", "true");
+    canvas.dataset.pcConeDebug = "true";
+    document.body.appendChild(canvas);
+    this.debugCanvas = canvas;
+    this.debugCtx = canvas.getContext("2d");
+
+    this.resizeDebugCanvas();
+
+    this.debugResizeObserver = new ResizeObserver(this.boundResizeDebugCanvas);
+    this.debugResizeObserver.observe(document.documentElement);
+    window.addEventListener("resize", this.boundResizeDebugCanvas, { passive: true });
+  }
+
+  /**
+   * Sync canvas pixel dimensions to the viewport (called on resize and init).
+   * Setting canvas.width resets the 2D context transform, so ctx.scale(dpr, dpr)
+   * is called once after each resize — safe from accumulation.
+   */
+  private resizeDebugCanvas(): void {
+    if (!this.debugCanvas || !this.debugCtx) return;
+
+    const dpr = window.devicePixelRatio || 1;
+    this.debugCanvas.width = Math.round(window.innerWidth * dpr);
+    this.debugCanvas.height = Math.round(window.innerHeight * dpr);
+    this.debugCtx.scale(dpr, dpr);
+
+    if (this.menu.isOpen()) this.drawDebugCanvas();
+  }
+
+  /**
+   * Remove the debug canvas and disconnect its observers.
+   */
+  private destroyDebugCanvas(): void {
+    this.debugResizeObserver?.disconnect();
+    this.debugResizeObserver = null;
+    window.removeEventListener("resize", this.boundResizeDebugCanvas);
+    this.debugCanvas?.remove();
+    this.debugCanvas = null;
+    this.debugCtx = null;
   }
 
   /**
@@ -213,80 +280,134 @@ export class DOMOverlay {
   }
 
   /**
-   * Draw debug visualization on canvas
+   * Draw the cone debug visualization.
+   *
+   * Renders (all in CSS pixels via DPR scaling):
+   * - Filled cone sectors for each item (highlighted in purple when active)
+   * - Dashed ring-radius circle (where items sit)
+   * - Deadzone circle
+   * - Pointer direction vector with arrowhead
+   * - Anchor dot (blue) and pointer dot (red)
+   * - Active item label
    */
   private drawDebugCanvas(): void {
-    if (!this.debugCanvas) return;
+    if (!this.debugCanvas || !this.debugCtx) return;
 
     const state = this.menu.getState();
     if (!state.open || !state.anchor || !state.pointer) {
-      this.debugCanvas.style.display = "none";
+      this.debugCanvas.style.visibility = "hidden";
       return;
     }
 
-    this.debugCanvas.style.display = "block";
-    this.debugCanvas.width = window.innerWidth;
-    this.debugCanvas.height = window.innerHeight;
+    this.debugCanvas.style.visibility = "visible";
 
-    const ctx = this.debugCanvas.getContext("2d");
-    if (!ctx) return;
+    const ctx = this.debugCtx;
+    const dpr = window.devicePixelRatio || 1;
+    // Clear in logical CSS pixels (canvas is already scaled by dpr)
+    ctx.clearRect(0, 0, this.debugCanvas.width / dpr, this.debugCanvas.height / dpr);
 
-    ctx.clearRect(0, 0, this.debugCanvas.width, this.debugCanvas.height);
-
-    // Draw anchor point
-    ctx.fillStyle = "rgba(100, 200, 255, 0.3)";
-    ctx.beginPath();
-    ctx.arc(state.anchor.x, state.anchor.y, 4, 0, 2 * Math.PI);
-    ctx.fill();
-
-    // Draw deadzone circle
+    const { anchor, pointer, activeId } = state;
+    const coneRad = deg2rad(this.options.coneHalfAngleDeg ?? 22.5);
     const deadzone = this.options.deadzone ?? 30;
-    ctx.strokeStyle = "rgba(100, 150, 255, 0.3)";
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.arc(state.anchor.x, state.anchor.y, deadzone, 0, 2 * Math.PI);
-    ctx.stroke();
-
-    // Draw pointer position
-    ctx.fillStyle = "rgba(255, 100, 100, 0.5)";
-    ctx.beginPath();
-    ctx.arc(state.pointer.x, state.pointer.y, 3, 0, 2 * Math.PI);
-    ctx.fill();
-
-    // Draw pointer direction vector
-    ctx.strokeStyle = "rgba(255, 150, 100, 0.6)";
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(state.anchor.x, state.anchor.y);
-    ctx.lineTo(state.pointer.x, state.pointer.y);
-    ctx.stroke();
-
-    // Draw cone sectors
-    const coneRad = (this.options.coneHalfAngleDeg ?? 22.5) * (Math.PI / 180);
     const angles = this.menu.getItemAngles();
+    const { ringRadius } = this.menu.getComputedSizes();
+    const sectorR = ringRadius + 20; // extend slightly beyond the ring
 
-    for (const angle of angles) {
-      // Draw cone for this item
-      ctx.strokeStyle = "rgba(150, 200, 100, 0.3)";
-      ctx.lineWidth = 1;
-
-      // Cone boundaries
-      const r1 = 150; // radius for visualization
-      const x1 = state.anchor.x + r1 * Math.cos(angle - coneRad);
-      const y1 = state.anchor.y + r1 * Math.sin(angle - coneRad);
-      const x2 = state.anchor.x + r1 * Math.cos(angle + coneRad);
-      const y2 = state.anchor.y + r1 * Math.sin(angle + coneRad);
+    // ── Cone sectors (filled pie slices) ─────────────────────────────
+    for (let i = 0; i < angles.length; i++) {
+      const angle = angles[i];
+      const isActive = this.options.items?.[i]?.id === activeId;
 
       ctx.beginPath();
-      ctx.moveTo(state.anchor.x, state.anchor.y);
-      ctx.lineTo(x1, y1);
-      ctx.stroke();
+      ctx.moveTo(anchor.x, anchor.y);
+      ctx.arc(anchor.x, anchor.y, sectorR, angle - coneRad, angle + coneRad);
+      ctx.closePath();
 
-      ctx.beginPath();
-      ctx.moveTo(state.anchor.x, state.anchor.y);
-      ctx.lineTo(x2, y2);
+      ctx.fillStyle = isActive ? "rgba(124,58,237,0.18)" : "rgba(99,179,237,0.08)";
+      ctx.fill();
+
+      ctx.strokeStyle = isActive ? "rgba(124,58,237,0.75)" : "rgba(99,179,237,0.35)";
+      ctx.lineWidth = isActive ? 1.5 : 1;
+      ctx.setLineDash([]);
       ctx.stroke();
     }
+
+    // ── Ring radius circle (dashed green) ────────────────────────────
+    ctx.beginPath();
+    ctx.arc(anchor.x, anchor.y, ringRadius, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(72,187,120,0.45)";
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // ── Deadzone circle (dashed red) ─────────────────────────────────
+    ctx.beginPath();
+    ctx.arc(anchor.x, anchor.y, deadzone, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(237,100,100,0.50)";
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 3]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // ── Pointer direction vector with arrowhead ───────────────────────
+    const dx = pointer.x - anchor.x;
+    const dy = pointer.y - anchor.y;
+    const len = Math.sqrt(dx * dx + dy * dy);
+    if (len > 2) {
+      ctx.beginPath();
+      ctx.moveTo(anchor.x, anchor.y);
+      ctx.lineTo(pointer.x, pointer.y);
+      ctx.strokeStyle = "rgba(255,150,100,0.85)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Arrowhead
+      const headLen = 9;
+      const headAngle = 0.42; // ~24°
+      const vAngle = Math.atan2(dy, dx);
+      ctx.beginPath();
+      ctx.moveTo(pointer.x, pointer.y);
+      ctx.lineTo(
+        pointer.x - headLen * Math.cos(vAngle - headAngle),
+        pointer.y - headLen * Math.sin(vAngle - headAngle)
+      );
+      ctx.moveTo(pointer.x, pointer.y);
+      ctx.lineTo(
+        pointer.x - headLen * Math.cos(vAngle + headAngle),
+        pointer.y - headLen * Math.sin(vAngle + headAngle)
+      );
+      ctx.strokeStyle = "rgba(255,150,100,0.85)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+
+    // ── Anchor dot (blue) ────────────────────────────────────────────
+    ctx.beginPath();
+    ctx.arc(anchor.x, anchor.y, 4.5, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(99,179,237,0.90)";
+    ctx.fill();
+
+    // ── Pointer dot (red) ────────────────────────────────────────────
+    ctx.beginPath();
+    ctx.arc(pointer.x, pointer.y, 4.5, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(237,100,100,0.90)";
+    ctx.fill();
+
+    // ── Active item label ────────────────────────────────────────────
+    if (activeId) {
+      const activeItem = this.options.items?.find(it => it.id === activeId);
+      if (activeItem) {
+        ctx.font = "bold 11px monospace";
+        ctx.fillStyle = "rgba(124,58,237,0.95)";
+        ctx.fillText(`✓ ${activeItem.label}`, anchor.x + 8, anchor.y - 12);
+      }
+    }
+
+    // ── Hint label ───────────────────────────────────────────────────
+    ctx.font = "10px monospace";
+    ctx.fillStyle = "rgba(99,130,200,0.55)";
+    ctx.fillText("cone viz", anchor.x + 8, anchor.y + (activeId ? 6 : -4));
   }
 
   /**
@@ -369,7 +490,7 @@ export class DOMOverlay {
 
     // Hide debug canvas
     if (this.debugCanvas) {
-      this.debugCanvas.style.display = "none";
+      this.debugCanvas.style.visibility = "hidden";
     }
   }
 
@@ -401,10 +522,8 @@ export class DOMOverlay {
       this.overlay.remove();
     }
 
-    // Remove debug canvas
-    if (this.debugCanvas) {
-      this.debugCanvas.remove();
-    }
+    // Remove debug canvas and observers
+    this.destroyDebugCanvas();
 
     // Remove styles
     removeStyles();
@@ -412,7 +531,6 @@ export class DOMOverlay {
     this.overlay = null;
     this.menuContainer = null;
     this.itemElements.clear();
-    this.debugCanvas = null;
   }
 
   /**

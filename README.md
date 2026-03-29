@@ -12,6 +12,8 @@ Press → drag toward an item → release to select. Deadzone and hysteresis ens
 ## Features
 
 - 🎯 **Prediction Cone** — angular proximity selection, not hover-based
+- 📋 **Dropdown Menu** — traditional list menu with triangle-based submenu navigation
+- 🔺 **Safe Triangle** — Amazon/macOS-style diagonal pointer prediction for submenus
 - ⚡ **Zero Dependencies** — only DOM APIs, nothing else
 - 📦 **Tree-shakeable** — ESM + CJS + TypeScript declarations
 - 📱 **Touch & Mouse** — Pointer Events API for all devices
@@ -19,6 +21,7 @@ Press → drag toward an item → release to select. Deadzone and hysteresis ens
 - ♿ **Accessible** — ARIA roles, Escape to close
 - 📐 **Deadzone + Hysteresis** — prevents flickering and accidental triggers
 - 🔧 **Responsive** — ring radius and item size adapt to viewport
+- 🐛 **Debug Overlay** — optional canvas visualization for cone and triangle zones
 
 ## Install
 
@@ -72,6 +75,37 @@ menu.destroy();                                     // Cleanup
 **Trigger modes:** `pointerdown` · `contextmenu` · `longpress`
 
 → Full API reference: [docs/API.md](docs/API.md)
+
+## Dropdown Menu
+
+```typescript
+import { createDropdownMenu } from 'prediction-cone';
+
+const dropdown = createDropdownMenu({
+  items: [
+    { id: 'file', label: 'File', icon: '📁', children: [
+      { id: 'new',  label: 'New File', shortcut: '⌘N' },
+      { id: 'open', label: 'Open...',  shortcut: '⌘O' },
+    ]},
+    { id: 'edit', label: 'Edit', icon: '✏️' },
+  ],
+});
+
+dropdown.attach(document.getElementById('btn')!, { trigger: 'contextmenu' });
+dropdown.on('select', ({ item }) => console.log(item?.label));
+```
+
+Items with `children` show a nested submenu. Triangle prediction keeps it open while you move diagonally toward it.
+
+### Triangle Debug Mode
+
+Visualize the safe-triangle zone in real time during development:
+
+```typescript
+createDropdownMenu({ items, debug: true });
+```
+
+> ⚠️ Remove `debug: true` before shipping. The demo page has a live toggle.
 
 ## Theming
 

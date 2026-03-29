@@ -276,9 +276,13 @@
         color: var(--text-muted); background: transparent;
         border: 1px solid var(--border); border-radius: 4px;
         padding: 0.2rem 0.55rem; cursor: pointer;
-        transition: color 0.15s, border-color 0.15s;
+        transition: color 0.15s, border-color 0.15s, background 0.15s;
       }
       .trigger-chip:hover { color: var(--accent-text); border-color: var(--accent); }
+      .trigger-chip.active {
+        color: var(--accent-text); border-color: var(--accent);
+        background: var(--accent-subtle);
+      }
 
       /* ── PM switcher ─────────────────────────────── */
       .pm-block {
@@ -494,6 +498,7 @@
               <div class="dot"></div>
             </div>
             <button class="trigger-chip" id="triggerSelectToggle">trigger: pointerdown</button>
+            <button class="trigger-chip" id="coneVizToggle" title="Toggle cone debug overlay">🎯 viz: off</button>
           </div>
           <div class="demo-body" id="demoArea" style="cursor: pointer;">
             <div class="demo-inner">
@@ -519,6 +524,7 @@
               <div class="dot"></div>
             </div>
             <span style="font-size: 0.75rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">createDropdownMenu</span>
+            <button class="trigger-chip" id="triangleDebugToggle" title="Toggle safe-triangle debug overlay">🔺 triangle: off</button>
           </div>
           <div class="demo-body" id="dropdownArea" style="cursor: context-menu;">
             <div class="demo-inner">
@@ -659,8 +665,7 @@ menu.<span class="tf">on</span>(<span class="ts">'select'</span>, (e) => {
       });
 
       // ── Dropdown menu demo ──────────────────────────────
-      const dropdown = createDropdownMenu({
-        items: [
+      const dropdownItems = [
           { id: 'file', label: 'File', icon: '📁', children: [
             { id: 'new',    label: 'New File',    icon: '📄' },
             { id: 'open',   label: 'Open...',     icon: '📂' },
@@ -676,21 +681,45 @@ menu.<span class="tf">on</span>(<span class="ts">'select'</span>, (e) => {
           ]},
           { id: 'view',   label: 'View',   icon: '👁️' },
           { id: 'help',   label: 'Help',   icon: '❓' },
-        ],
-      });
+      ];
 
-      dropdown.attach(document.getElementById('dropdownArea'), { trigger: 'contextmenu' });
+      let triangleDebug = false;
 
-      dropdown.on('select', ({ item }) => {
-        const el = document.getElementById('dropdownDisplay');
-        if (!item) return;
-        el.textContent = `✓ ${item.label}`;
-        el.classList.add('active');
-        clearTimeout(el._timer);
-        el._timer = setTimeout(() => {
-          el.textContent = '—';
-          el.classList.remove('active');
-        }, 2500);
+      function createDropdown(debug) {
+        const dd = createDropdownMenu({
+          items: dropdownItems,
+          debug,
+        });
+
+        dd.attach(document.getElementById('dropdownArea'), { trigger: 'contextmenu' });
+
+        dd.on('select', ({ item }) => {
+          const el = document.getElementById('dropdownDisplay');
+          if (!item) return;
+          el.textContent = `✓ ${item.label}`;
+          el.classList.add('active');
+          clearTimeout(el._timer);
+          el._timer = setTimeout(() => {
+            el.textContent = '—';
+            el.classList.remove('active');
+          }, 2500);
+        });
+
+        return dd;
+      }
+
+      let dropdown = createDropdown(false);
+
+      // ── Triangle debug toggle ─────────────────────────────
+      const triangleBtn = document.getElementById('triangleDebugToggle');
+      triangleBtn.addEventListener('click', () => {
+        triangleDebug = !triangleDebug;
+        triangleBtn.textContent = triangleDebug ? '🔺 triangle: on' : '🔺 triangle: off';
+        triangleBtn.classList.toggle('active', triangleDebug);
+
+        // Recreate dropdown with new debug flag
+        dropdown.destroy();
+        dropdown = createDropdown(triangleDebug);
       });
 
       // Theme
@@ -724,6 +753,16 @@ menu.<span class="tf">on</span>(<span class="ts">'select'</span>, (e) => {
         instr.textContent = trigger === 'contextmenu'
           ? 'Right-click inside the area below, then move your pointer in any direction.'
           : 'Click inside the area below, then move your pointer in any direction.';
+      });
+
+      // Cone viz toggle
+      let coneViz = false;
+      const coneVizBtn = document.getElementById('coneVizToggle');
+      coneVizBtn.addEventListener('click', () => {
+        coneViz = !coneViz;
+        coneVizBtn.textContent = coneViz ? '🎯 viz: on' : '🎯 viz: off';
+        coneVizBtn.classList.toggle('active', coneViz);
+        menu.setOptions({ showViz: coneViz });
       });
 
       // PM switcher

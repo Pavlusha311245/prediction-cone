@@ -72,6 +72,9 @@ class PredictionConeMenuFacade implements ConeMenuInstance {
 
   setOptions(options: Partial<ConeOptions>): void {
     this.coreMenu.setOptions(options);
+    if (options.showViz !== undefined) {
+      this.domOverlay.setShowViz(options.showViz);
+    }
   }
 
   destroy(): void {

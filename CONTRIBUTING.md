@@ -33,14 +33,21 @@ src/
 ├── dom/
 │   ├── overlay.ts     # DOM rendering & pointer handling
 │   ├── trigger.ts     # Attach/detach trigger management
-│   └── styles.ts      # CSS injection & theming
+│   └── styles.ts      # CSS injection & theming (pcm- prefix)
+├── dropdown/
+│   ├── menu.ts        # Dropdown menu with safe-triangle submenu navigation
+│   └── styles.ts      # CSS injection & theming (pcd- prefix)
 └── utils/
     ├── geometry.ts     # Pure math functions
     ├── geometry.test.ts
     ├── emitter.ts      # Event emitter
     ├── rafThrottle.ts  # rAF-based throttle
     ├── sanitize.ts     # HTML/SVG icon sanitizer (XSS protection)
-    └── sanitize.test.ts
+    ├── sanitize.test.ts
+    ├── safeTriangle.ts     # Diagonal cursor prediction (triangle zone)
+    ├── safeTriangle.test.ts
+    ├── mouseTracker.ts     # Ring-buffer pointer history + velocity
+    └── mouseTracker.test.ts
 ```
 
 ## Guidelines
