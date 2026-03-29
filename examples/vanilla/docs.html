@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" prefix="og: https://ogp.me/ns#">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>prediction-cone — Documentation</title>
+    <meta name="description" content="Detailed prediction-cone documentation with radial prediction cone, safe triangle submenu navigation, API options, and an interactive playground." />
+    <meta name="keywords" content="prediction cone, safe triangle, safety triangle, menu aim, radial menu, dropdown submenu, typescript ui library" />
+    <meta name="robots" content="index, follow" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="prediction-cone — Documentation" />
+    <meta property="og:description" content="Full docs: radial prediction cone + safe triangle submenu navigation, with editable API examples." />
+    <meta property="og:url" content="https://pavlusha311245.github.io/prediction-cone/examples/vanilla/docs.html" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+    <style>
+      /* ─── Tokens ─────────────────────────────────────────── */
+      :root {
+        --bg:           #f8fafc;
+        --surface:      #ffffff;
+        --surface-2:    #f1f5f9;
+        --surface-3:    #e2e8f0;
+        --border:       #e2e8f0;
+        --text:         #0f172a;
+        --muted:        #64748b;
+        --muted-2:      #94a3b8;
+        --accent:       #7c3aed;
+        --accent-soft:  #ede9fe;
+        --accent-text:  #6d28d9;
+        --danger:       #dc2626;
+        --danger-soft:  #fef2f2;
+        --code-bg:      #0d1117;
+        --code-border:  #21262d;
+        --code-text:    #e6edf3;
+        --code-muted:   #8b949e;
+        --sidebar-w:    248px;
+        --topbar-h:     56px;
+        --radius:       8px;
+        --mono: "JetBrains Mono", "Fira Code", SFMono-Regular, Menlo, monospace;
+        --tr: 0.15s ease;
+      }
+
+      [data-theme="dark"] {
+        --bg:          #09090b;
+        --surface:     #18181b;
+        --surface-2:   #27272a;
+        --surface-3:   #3f3f46;
+        --border:      #3f3f46;
+        --text:        #fafafa;
+        --muted:       #a1a1aa;
+        --muted-2:     #71717a;
+        --accent:      #a78bfa;
+        --accent-soft: #2e1065;
+        --accent-text: #c4b5fd;
+        --code-bg:     #0a0a0d;
+        --code-border: #27272a;
+      }
+
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      html { scroll-behavior: smooth; }
+
+      body {
+        font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-size: 14px;
+        line-height: 1.65;
+        background: var(--bg);
+        color: var(--text);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* ─── Topbar ─────────────────────────────────────────── */
+      .topbar {
+        position: fixed;
+        inset: 0 0 auto;
+        height: var(--topbar-h);
+        background: color-mix(in srgb, var(--surface) 92%, transparent);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+        gap: 10px;
+        z-index: 200;
+      }
+
+      .topbar-brand {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+        color: var(--text);
+        font-weight: 600;
+        font-size: 15px;
+        white-space: nowrap;
+      }
+
+      .topbar-brand-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 7px;
+        background: linear-gradient(135deg, #7c3aed, #a855f7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 15px;
+        flex-shrink: 0;
+      }
+
+      .topbar-version {
+        font-size: 11px;
+        font-family: var(--mono);
+        color: var(--muted);
+        padding: 2px 7px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+      }
+
+      .topbar-sep { flex: 1; }
+
+      .topbar-links {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+      }
+
+      .topbar-link {
+        padding: 6px 10px;
+        border-radius: 6px;
+        font-size: 13px;
+        color: var(--muted);
+        text-decoration: none;
+        transition: background var(--tr), color var(--tr);
+      }
+
+      .topbar-link:hover { background: var(--surface-2); color: var(--text); }
+
+      .topbar-btn {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: var(--surface-2);
+        cursor: pointer;
+        font-size: 15px;
+        color: var(--text);
+        transition: border-color var(--tr);
+        line-height: 1;
+      }
+
+      .topbar-btn:hover { border-color: var(--accent); }
+
+      #themeToggle .icon-moon { display: none; }
+      [data-theme="dark"] #themeToggle .icon-sun  { display: none; }
+      [data-theme="dark"] #themeToggle .icon-moon { display: block; }
+
+      /* ─── Layout ─────────────────────────────────────────── */
+      .layout {
+        display: flex;
+        margin-top: var(--topbar-h);
+        min-height: calc(100vh - var(--topbar-h));
+      }
+
+      /* ─── Sidebar ────────────────────────────────────────── */
+      .sidebar {
+        width: var(--sidebar-w);
+        flex-shrink: 0;
+        position: sticky;
+        top: var(--topbar-h);
+        height: calc(100vh - var(--topbar-h));
+        overflow-y: auto;
+        border-right: 1px solid var(--border);
+        padding: 20px 0 40px;
+        scrollbar-width: thin;
+        scrollbar-color: var(--border) transparent;
+      }
+
+      .nav-group { padding: 0 10px; margin-bottom: 22px; }
+
+      .nav-group-label {
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+        color: var(--muted-2);
+        padding: 0 8px;
+        margin-bottom: 3px;
+      }
+
+      .nav-item {
+        display: block;
+        padding: 5px 8px;
+        border-radius: 6px;
+        font-size: 13px;
+        color: var(--muted);
+        text-decoration: none;
+        transition: background var(--tr), color var(--tr);
+      }
+
+      .nav-item:hover { background: var(--surface-2); color: var(--text); }
+      .nav-item.active { background: var(--accent-soft); color: var(--accent-text); font-weight: 500; }
+
+      /* ─── Main ───────────────────────────────────────────── */
+      .main {
+        flex: 1;
+        min-width: 0;
+        padding: 44px 52px 80px;
+        max-width: 900px;
+      }
+
+      .section { margin-bottom: 64px; scroll-margin-top: calc(var(--topbar-h) + 20px); }
+
+      /* ─── Hero ───────────────────────────────────────────── */
+      .hero-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        font-family: var(--mono);
+        color: var(--accent-text);
+        background: var(--accent-soft);
+        border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+        padding: 3px 10px;
+        border-radius: 999px;
+        margin-bottom: 16px;
+      }
+
+      .hero-title {
+        font-size: clamp(26px, 4vw, 40px);
+        font-weight: 700;
+        letter-spacing: -0.025em;
+        line-height: 1.15;
+        margin-bottom: 14px;
+      }
+
+      .hero-title span { color: var(--accent); }
+
+      .hero-desc {
+        font-size: 16px;
+        color: var(--muted);
+        max-width: 520px;
+        margin-bottom: 22px;
+        line-height: 1.7;
+      }
+
+      .hero-badges { display: flex; flex-wrap: wrap; gap: 7px; }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        font-size: 12px;
+        font-family: var(--mono);
+        color: var(--muted);
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        padding: 3px 9px;
+      }
+
+      /* ─── Section headings ───────────────────────────────── */
+      .section-title {
+        font-size: 21px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        padding-bottom: 14px;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 20px;
+      }
+
+      h3 { font-size: 14px; font-weight: 600; margin: 22px 0 8px; }
+
+      p { color: var(--muted); margin-bottom: 12px; }
+      p:last-child { margin-bottom: 0; }
+
+      a { color: var(--accent); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+
+      /* ─── Variant cards ──────────────────────────────────── */
+      .variant-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-bottom: 28px;
+      }
+
+      .variant-card {
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 16px;
+        background: var(--surface);
+        transition: border-color var(--tr);
+      }
+
+      .variant-card:hover { border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); }
+
+      .vc-icon  { font-size: 24px; margin-bottom: 10px; }
+      .vc-title { font-size: 13px; font-weight: 600; margin-bottom: 5px; }
+      .vc-desc  { font-size: 13px; color: var(--muted); line-height: 1.55; }
+
+      /* ─── Code blocks ────────────────────────────────────── */
+      .code-block {
+        border: 1px solid var(--code-border);
+        border-radius: var(--radius);
+        overflow: hidden;
+        margin: 10px 0 18px;
+      }
+
+      .code-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 7px 12px;
+        background: #161b22;
+        border-bottom: 1px solid var(--code-border);
+      }
+
+      .code-filename { font-size: 12px; font-family: var(--mono); color: var(--code-muted); }
+
+      .code-copy {
+        font-size: 11px;
+        font-family: var(--mono);
+        padding: 2px 8px;
+        border: 1px solid #30363d;
+        border-radius: 4px;
+        background: transparent;
+        color: var(--code-muted);
+        cursor: pointer;
+        transition: color var(--tr), border-color var(--tr);
+      }
+
+      .code-copy:hover { color: #e6edf3; border-color: #8b949e; }
+
+      pre {
+        margin: 0;
+        padding: 16px;
+        background: var(--code-bg);
+        overflow-x: auto;
+      }
+
+      code {
+        font-family: var(--mono);
+        font-size: 13px;
+        color: var(--code-text);
+        line-height: 1.6;
+      }
+
+      :not(pre) > code {
+        font-family: var(--mono);
+        font-size: 0.85em;
+        color: var(--accent-text);
+        background: var(--accent-soft);
+        padding: 1px 5px;
+        border-radius: 4px;
+        border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+      }
+
+      /* ─── API table ──────────────────────────────────────── */
+      .api-table-wrap {
+        overflow-x: auto;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        margin: 10px 0 20px;
+      }
+
+      .api-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+
+      .api-table th {
+        background: var(--surface-2);
+        padding: 8px 14px;
+        text-align: left;
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--muted);
+        border-bottom: 1px solid var(--border);
+        white-space: nowrap;
+      }
+
+      .api-table td {
+        padding: 9px 14px;
+        border-bottom: 1px solid var(--border);
+        vertical-align: top;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      .api-table tr:last-child td { border-bottom: none; }
+      .api-table tr:hover td { background: var(--surface-2); }
+
+      .t-prop    { font-family: var(--mono); font-size: 13px; color: var(--text); font-weight: 500; white-space: nowrap; }
+      .t-type    { font-family: var(--mono); font-size: 12px; color: #7ee787; white-space: nowrap; }
+      .t-default { font-family: var(--mono); font-size: 12px; color: #79c0ff; }
+
+      .t-req {
+        display: inline-block;
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        padding: 1px 5px;
+        border-radius: 3px;
+        background: #3d1212;
+        color: #fca5a5;
+        margin-left: 5px;
+        font-family: Inter, sans-serif;
+        vertical-align: middle;
+      }
+
+      /* ─── Method heading ─────────────────────────────────── */
+      .method-heading { display: flex; align-items: baseline; gap: 10px; margin: 24px 0 8px; }
+      .method-heading h3 { margin: 0; font-size: 16px; font-family: var(--mono); }
+
+      .m-tag {
+        font-size: 10px;
+        font-weight: 700;
+        font-family: Inter, sans-serif;
+        padding: 2px 7px;
+        border-radius: 4px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      .m-tag-fn    { background: #1e3a5f; color: #93c5fd; }
+      .m-tag-class { background: #14532d; color: #86efac; }
+
+      /* ─── Playground ─────────────────────────────────────── */
+      .pg-layout {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 20px;
+        align-items: start;
+      }
+
+      .pg-form {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 16px;
+      }
+
+      .pg-form-title {
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 14px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .frow { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+      .ff   { margin-bottom: 10px; }
+
+      label {
+        display: block;
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--muted-2);
+        margin-bottom: 4px;
+      }
+
+      input, textarea, select {
+        width: 100%;
+        border: 1px solid var(--border);
+        background: var(--surface-2);
+        color: var(--text);
+        border-radius: 6px;
+        padding: 7px 10px;
+        font-family: inherit;
+        font-size: 13px;
+        outline: none;
+        transition: border-color var(--tr);
+        appearance: none;
+        -webkit-appearance: none;
+      }
+
+      input:focus, textarea:focus, select:focus { border-color: var(--accent); }
+
+      textarea { resize: vertical; min-height: 80px; }
+      #code { font-family: var(--mono); font-size: 12px; min-height: 130px; }
+
+      /* ─── Buttons ────────────────────────────────────────── */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 6px 12px;
+        border: 1px solid var(--border);
+        background: var(--surface-2);
+        color: var(--text);
+        border-radius: 6px;
+        font: inherit;
+        font-size: 12px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: border-color var(--tr), background var(--tr);
+        white-space: nowrap;
+      }
+
+      .btn:hover { border-color: var(--accent); }
+
+      .btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+      .btn-primary:hover { opacity: 0.88; }
+
+      .btn-danger { color: var(--danger); }
+      .btn-danger:hover { border-color: var(--danger); background: var(--danger-soft); }
+
+      .fa { display: flex; gap: 6px; flex-wrap: wrap; padding-top: 4px; }
+
+      /* ─── Examples panel ─────────────────────────────────── */
+      .pg-panel { min-width: 0; }
+
+      .pg-toolbar { display: flex; gap: 8px; margin-bottom: 14px; }
+
+      .search-wrap { position: relative; flex: 1; }
+
+      .search-wrap::before {
+        content: "⌕";
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--muted-2);
+        font-size: 16px;
+        pointer-events: none;
+      }
+
+      #searchInput { padding-left: 30px; }
+
+      .pg-meta { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+
+      /* ── Example card ───────────────────────────────────── */
+      .ex-card {
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--surface);
+        overflow: hidden;
+        margin-bottom: 10px;
+        transition: border-color var(--tr);
+      }
+
+      .ex-card:hover { border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); }
+
+      .ex-head {
+        padding: 10px 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        border-bottom: 1px solid var(--border);
+        background: var(--surface-2);
+      }
+
+      .ex-head h3 { font-size: 13px; font-weight: 600; flex: 1; min-width: 0; }
+      .ex-actions { display: flex; gap: 4px; flex-shrink: 0; }
+      .ex-actions .btn { padding: 4px 8px; font-size: 11px; }
+
+      .ex-body { padding: 12px 14px; }
+
+      .m-chip {
+        display: inline-flex;
+        align-items: center;
+        font-size: 11px;
+        font-family: var(--mono);
+        padding: 2px 7px;
+        border-radius: 4px;
+        background: var(--accent-soft);
+        color: var(--accent-text);
+        margin-bottom: 7px;
+      }
+
+      .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+
+      .tag {
+        font-size: 11px;
+        padding: 1px 7px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        color: var(--muted);
+      }
+
+      .ex-desc { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+
+      .ex-code pre {
+        border-radius: 6px;
+        border: 1px solid var(--code-border);
+        max-height: 200px;
+        overflow: auto;
+        padding: 12px;
+        font-size: 12px;
+      }
+
+      /* ─── Empty / meta ───────────────────────────────────── */
+      .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        border: 1px dashed var(--border);
+        border-radius: var(--radius);
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      hr { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+
+      /* ─── Footer ─────────────────────────────────────────── */
+      .footer {
+        border-top: 1px solid var(--border);
+        padding: 20px 52px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      /* ─── Scrollbar ──────────────────────────────────────── */
+      ::-webkit-scrollbar { width: 6px; height: 6px; }
+      ::-webkit-scrollbar-track { background: transparent; }
+      ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+
+      /* ─── Responsive ─────────────────────────────────────── */
+      @media (max-width: 1024px) {
+        .main { padding: 32px 28px 60px; }
+        .footer { padding: 20px 28px; }
+      }
+
+      @media (max-width: 860px) {
+        .sidebar { display: none; }
+        .pg-layout { grid-template-columns: 1fr; }
+        .variant-grid { grid-template-columns: 1fr 1fr; }
+      }
+
+      @media (max-width: 540px) {
+        .variant-grid { grid-template-columns: 1fr; }
+        .main { padding: 20px 16px 60px; }
+        .topbar-link { display: none; }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- ── Topbar ─────────────────────────────────────── -->
+    <header class="topbar">
+      <a href="./index.html" class="topbar-brand">
+        <div class="topbar-brand-icon">🔮</div>
+        <span>prediction-cone</span>
+      </a>
+      <span class="topbar-version">v1.x</span>
+
+      <div class="topbar-sep"></div>
+
+      <nav class="topbar-links">
+        <a href="./index.html" class="topbar-link">Demo</a>
+        <a href="../../docs/API.md" class="topbar-link">API.md</a>
+        <a href="../../CHANGELOG.md" class="topbar-link">Changelog</a>
+        <a href="https://github.com/Pavlusha311245/prediction-cone" class="topbar-link" target="_blank" rel="noopener">GitHub ↗</a>
+      </nav>
+
+      <button id="themeToggle" class="topbar-btn" type="button" title="Toggle theme">
+        <span class="icon-sun">☀️</span>
+        <span class="icon-moon">🌙</span>
+      </button>
+    </header>
+
+    <!-- ── Layout ─────────────────────────────────────── -->
+    <div class="layout">
+
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <nav>
+          <div class="nav-group">
+            <div class="nav-group-label">Overview</div>
+            <a href="#intro"      class="nav-item">Introduction</a>
+            <a href="#quickstart" class="nav-item">Quick start</a>
+          </div>
+
+          <div class="nav-group">
+            <div class="nav-group-label">Architecture</div>
+            <a href="#arch-cone"     class="nav-item">Prediction Cone</a>
+            <a href="#arch-triangle" class="nav-item">Safe Triangle</a>
+            <a href="#arch-hybrid"   class="nav-item">Hybrid UX</a>
+          </div>
+
+          <div class="nav-group">
+            <div class="nav-group-label">API Reference</div>
+            <a href="#api-cone"     class="nav-item">createPredictionConeMenu</a>
+            <a href="#api-dropdown" class="nav-item">createDropdownMenu</a>
+            <a href="#api-safe-tri" class="nav-item">SafeTriangle</a>
+            <a href="#api-mouse"    class="nav-item">MouseTracker</a>
+          </div>
+
+          <div class="nav-group">
+            <div class="nav-group-label">Resources</div>
+            <a href="#playground"             class="nav-item">Playground</a>
+            <a href="../../docs/EXAMPLES.md"  class="nav-item">Examples.md ↗</a>
+            <a href="../../CHANGELOG.md"      class="nav-item">Changelog ↗</a>
+          </div>
+        </nav>
+      </aside>
+
+      <!-- Main -->
+      <main class="main">
+
+        <!-- ── Intro ─────────────────────────────────── -->
+        <section id="intro" class="section">
+          <div class="hero-eyebrow">📦 npm install prediction-cone</div>
+          <h1 class="hero-title">
+            Prediction Cone<br />
+            <span>&amp; Safe Triangle</span>
+          </h1>
+          <p class="hero-desc">
+            High-performance TypeScript library for radial context menus with
+            <strong>prediction cone</strong> pointer selection and dropdown
+            <strong>safe triangle</strong> submenu navigation.
+          </p>
+          <div class="hero-badges">
+            <span class="badge">TypeScript</span>
+            <span class="badge">Zero deps</span>
+            <span class="badge">~6 kB gzip</span>
+            <span class="badge">ESM + CJS</span>
+          </div>
+        </section>
+
+        <!-- ── Quick start ────────────────────────────── -->
+        <section id="quickstart" class="section">
+          <h2 class="section-title">Quick Start</h2>
+
+          <h3>Install</h3>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-filename">terminal</span>
+            </div>
+            <pre><code>npm install prediction-cone
+# or: pnpm add prediction-cone / bun add prediction-cone</code></pre>
+          </div>
+
+          <h3>Prediction cone radial menu</h3>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-filename">main.ts</span>
+              <button class="code-copy" data-target="code-cone-basic">Copy</button>
+            </div>
+            <pre id="code-cone-basic"><code>import { createPredictionConeMenu } from 'prediction-cone';
+
+const menu = createPredictionConeMenu({
+  items: [
+    { id: 'cut',   label: 'Cut',   icon: '✂️' },
+    { id: 'copy',  label: 'Copy',  icon: '📋' },
+    { id: 'paste', label: 'Paste', icon: '📌' },
+  ],
+  ringRadius: 110,
+  coneHalfAngleDeg: 22.5,
+  deadzone: 30,
+});
+
+menu.on('select', ({ item }) => console.log('Selected:', item.id));
+menu.attach(document, { trigger: 'contextmenu' });</code></pre>
+          </div>
+
+          <h3>Dropdown with safe triangle submenus</h3>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-filename">main.ts</span>
+              <button class="code-copy" data-target="code-dropdown-basic">Copy</button>
+            </div>
+            <pre id="code-dropdown-basic"><code>import { createDropdownMenu } from 'prediction-cone';
+
+const dropdown = createDropdownMenu({
+  items: [
+    {
+      id: 'file',
+      label: 'File',
+      children: [
+        { id: 'new',  label: 'New'  },
+        { id: 'open', label: 'Open' },
+      ],
+    },
+  ],
+  submenuDelay: 150,
+});
+
+dropdown.attach(document.getElementById('btn')!, { trigger: 'click' });</code></pre>
+          </div>
+        </section>
+
+        <!-- ── Architecture ───────────────────────────── -->
+        <section id="architecture" class="section">
+          <h2 class="section-title">Architecture &amp; Variants</h2>
+
+          <div class="variant-grid">
+            <div class="variant-card" id="arch-cone">
+              <div class="vc-icon">🎯</div>
+              <div class="vc-title">Prediction Cone</div>
+              <p class="vc-desc">Radial menu — fastest for action selection. Uses pointer direction + velocity to predict intent.</p>
+            </div>
+            <div class="variant-card" id="arch-triangle">
+              <div class="vc-icon">🔺</div>
+              <div class="vc-title">Safe Triangle</div>
+              <p class="vc-desc">Dropdown with nested submenus — keeps menus open while cursor travels diagonally.</p>
+            </div>
+            <div class="variant-card" id="arch-hybrid">
+              <div class="vc-icon">⚡</div>
+              <div class="vc-title">Hybrid UX</div>
+              <p class="vc-desc">Radial for power users, dropdown for broad command sets. Reuse the same item structures.</p>
+            </div>
+          </div>
+
+          <h3>Comparison</h3>
+          <div class="api-table-wrap">
+            <table class="api-table">
+              <thead>
+                <tr>
+                  <th>Variant</th>
+                  <th>Best for</th>
+                  <th>Key options</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="t-prop">Prediction cone</td>
+                  <td>High-speed action selection, context menus</td>
+                  <td><code>coneHalfAngleDeg</code>, <code>deadzone</code>, <code>showViz</code></td>
+                </tr>
+                <tr>
+                  <td class="t-prop">Dropdown + safe triangle</td>
+                  <td>Nested labels, discoverable commands</td>
+                  <td><code>children</code>, <code>submenuDelay</code></td>
+                </tr>
+                <tr>
+                  <td class="t-prop">Hybrid</td>
+                  <td>Power users + broad command sets</td>
+                  <td>Shared <code>items</code> structures</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ── API: createPredictionConeMenu ─────────── -->
+        <section id="api-cone" class="section">
+          <h2 class="section-title">createPredictionConeMenu</h2>
+
+          <div class="method-heading">
+            <h3>createPredictionConeMenu(options)</h3>
+            <span class="m-tag m-tag-fn">function</span>
+          </div>
+          <p>Creates a radial prediction cone menu. Returns a <code>ConeMenuInstance</code>.</p>
+
+          <h3>ConeOptions</h3>
+          <div class="api-table-wrap">
+            <table class="api-table">
+              <thead>
+                <tr><th>Option</th><th>Type</th><th>Default</th><th>Description</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="t-prop">items</span><span class="t-req">required</span></td>
+                  <td><span class="t-type">ConeItem[]</span></td>
+                  <td>—</td>
+                  <td>Menu items to display</td>
+                </tr>
+                <tr>
+                  <td class="t-prop">ringRadius</td>
+                  <td><span class="t-type">number | (vp) ⇒ number</span></td>
+                  <td><span class="t-default">110</span></td>
+                  <td>Distance from center to item centers (px)</td>
+                </tr>
+                <tr>
+                  <td class="t-prop">itemSize</td>
+                  <td><span class="t-type">number | (vp) ⇒ number</span></td>
+                  <td><span class="t-default">56</span></td>
+                  <td>Width / height of each menu item (px)</td>
+                </tr>
+                <tr>
+                  <td class="t-prop">deadzone</td>
+                  <td><span class="t-type">number</span></td>
+                  <td><span class="t-default">30</span></td>
+                  <td>Radius near center where no selection occurs (px)</td>
+                </tr>
+                <tr>
+                  <td class="t-prop">coneHalfAngleDeg</td>
+                  <td><span class="t-type">number</span></td>
+                  <td><span class="t-default">22.5</span></td>
+                  <td>Half-angle of the selection cone (degrees)</td>
+                </tr>
+                <tr>
+                  <td class="t-prop">hysteresisDeg</td>
+                  <td><span class="t-type">number</span></td>
+                  <td><span class="t-default">3</span></td>
+                  <td>Stability angle to prevent selection flickering (degrees)</td>
+                </tr>
+                <tr>
+                  <td class="t-prop">startAngleDeg</td>
+                  <td><span class="t-type">number</span></td>
+                  <td><span class="t-default">-90</span></td>
+                  <td>Starting angle for item distribution (degrees; -90 = top)</td>
+                </tr>
+                <tr>
+                  <td class="t-prop">edgePadding</td>
+                  <td><span class="t-type">number</span></td>
+                  <td><span class="t-default">16</span></td>
+                  <td>Minimum padding from viewport edges (px)</td>
+                </tr>
+                <tr>
+                  <td class="t-prop">preferSafePlacement</td>
+                  <td><span class="t-type">boolean</span></td>
+                  <td><span class="t-default">true</span></td>
+                  <td>Auto-shift menu to keep all items in viewport</td>
+                </tr>
+                <tr>
+                  <td class="t-prop">container</td>
+                  <td><span class="t-type">HTMLElement</span></td>
+                  <td><span class="t-default">document.body</span></td>
+                  <td>Parent element for menu DOM nodes</td>
+                </tr>
+                <tr>
+                  <td class="t-prop">theme</td>
+                  <td><span class="t-type">"light" | "dark" | Record</span></td>
+                  <td><span class="t-default">"light"</span></td>
+                  <td>Visual theme — string preset or CSS variable map</td>
+                </tr>
+                <tr>
+                  <td class="t-prop">showViz</td>
+                  <td><span class="t-type">boolean</span></td>
+                  <td><span class="t-default">false</span></td>
+                  <td>Render debug canvas overlay (development only)</td>
+                </tr>
+                <tr>
+                  <td class="t-prop">longPressMs</td>
+                  <td><span class="t-type">number</span></td>
+                  <td><span class="t-default">250</span></td>
+                  <td>Long-press hold duration for touch devices (ms)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>ConeItem</h3>
+          <div class="code-block">
+            <pre><code>interface ConeItem {
+  id:        string;
+  label:     string;
+  disabled?: boolean;
+  icon?:     string | HTMLElement | (() => HTMLElement);
+}</code></pre>
+          </div>
+
+          <h3>ConeMenuInstance — methods</h3>
+          <div class="code-block">
+            <pre><code>menu.attach(target, options?)   // bind to Element or Document
+menu.detach(target?)            // unbind
+menu.openAt(x, y, context?)     // open at coordinates programmatically
+menu.close()                    // close the menu
+menu.setItems(items)            // replace item list
+menu.setOptions(partial)        // patch options at runtime
+menu.isOpen()                   // → boolean
+menu.getState()                 // → Readonly&lt;ConeMenuState&gt;
+menu.destroy()                  // full cleanup</code></pre>
+          </div>
+
+          <h3>Events</h3>
+          <div class="code-block">
+            <pre><code>menu.on('open',   e => { /* menu opened            */ })
+menu.on('close',  e => { /* menu closed            */ })
+menu.on('change', e => { /* highlighted item changed */ })
+menu.on('select', e => { /* item confirmed on release */ })
+
+// Every .on() returns an unsubscribe function:
+const unsub = menu.on('select', handler);
+unsub(); // ← removes the listener</code></pre>
+          </div>
+        </section>
+
+        <!-- ── API: createDropdownMenu ────────────────── -->
+        <section id="api-dropdown" class="section">
+          <h2 class="section-title">createDropdownMenu</h2>
+
+          <div class="method-heading">
+            <h3>createDropdownMenu(options)</h3>
+            <span class="m-tag m-tag-fn">function</span>
+          </div>
+          <p>Creates a dropdown menu with built-in safe triangle submenu navigation. Supports unlimited nesting via <code>children</code>.</p>
+
+          <h3>Key options</h3>
+          <div class="api-table-wrap">
+            <table class="api-table">
+              <thead>
+                <tr><th>Option</th><th>Type</th><th>Default</th><th>Description</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="t-prop">items</span><span class="t-req">required</span></td>
+                  <td><span class="t-type">DropdownItem[]</span></td>
+                  <td>—</td>
+                  <td>Item tree — add <code>children</code> array for submenus</td>
+                </tr>
+                <tr>
+                  <td class="t-prop">submenuDelay</td>
+                  <td><span class="t-type">number</span></td>
+                  <td><span class="t-default">150</span></td>
+                  <td>Grace period before closing submenu during diagonal cursor movement (ms)</td>
+                </tr>
+                <tr>
+                  <td class="t-prop">theme</td>
+                  <td><span class="t-type">"light" | "dark"</span></td>
+                  <td><span class="t-default">"light"</span></td>
+                  <td>Visual theme</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ── API: SafeTriangle ──────────────────────── -->
+        <section id="api-safe-tri" class="section">
+          <h2 class="section-title">SafeTriangle</h2>
+
+          <div class="method-heading">
+            <h3>new SafeTriangle(options)</h3>
+            <span class="m-tag m-tag-class">class</span>
+          </div>
+          <p>
+            Low-level safe triangle geometry. Use when building a custom menu system but still want
+            diagonal-movement tolerance that prevents premature submenu closing.
+          </p>
+
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-filename">custom-menu.ts</span>
+            </div>
+            <pre><code>import { SafeTriangle } from 'prediction-cone';
+
+const st = new SafeTriangle({ delay: 150, padding: 2 });
+
+// Call when a submenu opens — pass cursor position + submenu DOMRect
+st.activate({ x: 240, y: 180 }, submenuRect);
+
+// Check on every pointermove
+if (st.isInSafeZone(pointer.x, pointer.y)) {
+  // Cursor is inside the triangle → keep submenu open
+}</code></pre>
+          </div>
+        </section>
+
+        <!-- ── API: MouseTracker ──────────────────────── -->
+        <section id="api-mouse" class="section">
+          <h2 class="section-title">MouseTracker</h2>
+
+          <div class="method-heading">
+            <h3>new MouseTracker(options?)</h3>
+            <span class="m-tag m-tag-class">class</span>
+          </div>
+          <p>
+            Tracks pointer position and velocity with RAF-throttled updates.
+            Used internally by the cone menu; also exported for custom integrations.
+          </p>
+
+          <div class="code-block">
+            <pre><code>import { MouseTracker } from 'prediction-cone';
+
+const tracker = new MouseTracker();
+tracker.start();
+
+// Anywhere in your render loop:
+const { x, y, vx, vy } = tracker.getState();
+
+// Cleanup:
+tracker.stop();</code></pre>
+          </div>
+        </section>
+
+        <!-- ── Playground ──────────────────────────────── -->
+        <section id="playground" class="section">
+          <h2 class="section-title">API Playground</h2>
+          <p>Add, edit, and manage annotated code snippets. Stored in <code>localStorage</code> — use Export to share as JSON.</p>
+
+          <div class="pg-layout">
+
+            <!-- Form -->
+            <div>
+              <form id="exampleForm" class="pg-form">
+                <div class="pg-form-title">New example</div>
+
+                <div class="frow">
+                  <div class="ff">
+                    <label for="id">ID <span style="text-transform:none;font-weight:400;letter-spacing:0">(optional)</span></label>
+                    <input id="id" name="id" placeholder="auto" />
+                  </div>
+                  <div class="ff">
+                    <label for="method">Method</label>
+                    <select id="method" name="method">
+                      <option>createPredictionConeMenu</option>
+                      <option>createDropdownMenu</option>
+                      <option>SafeTriangle</option>
+                      <option>MouseTracker</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="ff">
+                  <label for="title">Title</label>
+                  <input id="title" name="title" placeholder="Example title" />
+                </div>
+
+                <div class="ff">
+                  <label for="description">Description</label>
+                  <textarea id="description" name="description" placeholder="What does this example show?" style="min-height:66px"></textarea>
+                </div>
+
+                <div class="ff">
+                  <label for="tags">Tags <span style="text-transform:none;font-weight:400;letter-spacing:0">(comma-separated)</span></label>
+                  <input id="tags" name="tags" placeholder="safe triangle, submenu, debug" />
+                </div>
+
+                <div class="ff">
+                  <label for="code">Code</label>
+                  <textarea id="code" name="code" placeholder="// TypeScript / JavaScript…"></textarea>
+                </div>
+
+                <div class="fa">
+                  <button class="btn btn-primary" id="saveBtn" type="submit">Add example</button>
+                  <button class="btn" id="cancelEditBtn" type="button" hidden>Cancel</button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Examples list -->
+            <div class="pg-panel">
+              <div class="pg-toolbar">
+                <div class="search-wrap">
+                  <input id="searchInput" aria-label="Search examples" placeholder="Search by id, title, method, tag…" />
+                </div>
+                <button class="btn" id="resetBtn" type="button">Reset</button>
+                <button class="btn" id="exportBtn" type="button">Export</button>
+              </div>
+
+              <p class="pg-meta">Examples: <strong id="examplesCount">0</strong></p>
+              <div id="examplesList"></div>
+              <p id="emptyState" class="empty-state" hidden>No examples found.</p>
+            </div>
+
+          </div>
+        </section>
+
+        <hr />
+        <p style="font-size:12px">
+          SEO aliases: prediction cone · safe triangle · safety triangle · menu-aim · submenu navigation.
+        </p>
+
+      </main>
+    </div>
+
+    <footer class="footer">
+      prediction-cone — MIT license ·
+      <a href="https://github.com/Pavlusha311245/prediction-cone" target="_blank" rel="noopener">GitHub ↗</a> ·
+      <a href="../../docs/API.md">Full API.md</a>
+    </footer>
+
+    <!-- Static code-block copy buttons + sidebar active tracking -->
+    <script>
+      document.querySelectorAll('.code-copy[data-target]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const el = document.getElementById(btn.dataset.target);
+          const text = el?.querySelector('code')?.textContent ?? '';
+          try {
+            await navigator.clipboard.writeText(text);
+            const prev = btn.textContent;
+            btn.textContent = 'Copied!';
+            setTimeout(() => { btn.textContent = prev; }, 1500);
+          } catch {}
+        });
+      });
+
+      const io = new IntersectionObserver(entries => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            document.querySelectorAll('.nav-item').forEach(l => l.classList.remove('active'));
+            const active = document.querySelector(`.nav-item[href="#${e.target.id}"]`);
+            if (active) active.classList.add('active');
+          }
+        }
+      }, { rootMargin: `-${56 + 8}px 0px -65% 0px` });
+
+      document.querySelectorAll('.section[id]').forEach(s => io.observe(s));
+    </script>
+
+    <script type="module" src="./docs-playground.js"></script>
+  </body>
+</html>
+

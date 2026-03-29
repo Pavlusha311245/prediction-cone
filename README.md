@@ -5,7 +5,7 @@
 [![license](https://img.shields.io/npm/l/prediction-cone)](./LICENSE)
 ![TypeScript](https://img.shields.io/badge/TypeScript-6.0-blue)
 
-A **zero-dependency** TypeScript radial menu that selects items by **pointer direction** within a configurable angular cone.
+A **zero-dependency** TypeScript radial + dropdown menu library with **prediction cone** selection and **safe triangle (safety triangle)** submenu navigation.
 
 Press → drag toward an item → release to select. Deadzone and hysteresis ensure stable, flicker-free selection.
 
@@ -13,7 +13,7 @@ Press → drag toward an item → release to select. Deadzone and hysteresis ens
 
 - 🎯 **Prediction Cone** — angular proximity selection, not hover-based
 - 📋 **Dropdown Menu** — traditional list menu with triangle-based submenu navigation
-- 🔺 **Safe Triangle** — Amazon/macOS-style diagonal pointer prediction for submenus
+- 🔺 **Safe Triangle / Safety Triangle** — Amazon/macOS-style diagonal pointer prediction for submenus
 - ⚡ **Zero Dependencies** — only DOM APIs, nothing else
 - 📦 **Tree-shakeable** — ESM + CJS + TypeScript declarations
 - 📱 **Touch & Mouse** — Pointer Events API for all devices
@@ -95,7 +95,7 @@ dropdown.attach(document.getElementById('btn')!, { trigger: 'contextmenu' });
 dropdown.on('select', ({ item }) => console.log(item?.label));
 ```
 
-Items with `children` show a nested submenu. Triangle prediction keeps it open while you move diagonally toward it.
+Items with `children` show a nested submenu. Safe triangle (also known as safety triangle / menu-aim) keeps it open while you move diagonally toward it.
 
 ### Triangle Debug Mode
 
@@ -139,6 +139,8 @@ Requires: Pointer Events API, CSS Custom Properties.
 
 ## Documentation
 
+- [Detailed Guide](docs/DETAILED_GUIDE.md)
+- [Interactive API Docs (vanilla HTML)](examples/vanilla/docs.html)
 - [API Reference](docs/API.md)
 - [Architecture](docs/ARCHITECTURE.md)
 - [Examples](docs/EXAMPLES.md)

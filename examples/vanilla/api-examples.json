@@ -1,0 +1,27 @@
+[
+  {
+    "id": "cone-basic",
+    "title": "Prediction cone: basic context menu",
+    "method": "createPredictionConeMenu",
+    "description": "Right-click anywhere to open a radial menu and select by pointer direction.",
+    "tags": ["prediction cone", "contextmenu"],
+    "code": "import { createPredictionConeMenu } from 'prediction-cone';\n\nconst menu = createPredictionConeMenu({\n  items: [\n    { id: 'copy', label: 'Copy', icon: '📋' },\n    { id: 'paste', label: 'Paste', icon: '📌' },\n  ],\n});\n\nmenu.attach(document, { trigger: 'contextmenu' });"
+  },
+  {
+    "id": "dropdown-safe-triangle",
+    "title": "Dropdown: safe triangle submenu",
+    "method": "createDropdownMenu",
+    "description": "Use nested children and safe triangle prediction to keep submenus open during diagonal pointer movement.",
+    "tags": ["safe triangle", "safety triangle", "submenu"],
+    "code": "import { createDropdownMenu } from 'prediction-cone';\n\nconst dropdown = createDropdownMenu({\n  items: [\n    {\n      id: 'file',\n      label: 'File',\n      children: [\n        { id: 'new', label: 'New' },\n        { id: 'open', label: 'Open' },\n      ],\n    },\n  ],\n  submenuDelay: 150,\n});\n\ndropdown.attach(document.getElementById('menu-btn')!, { trigger: 'click' });"
+  },
+  {
+    "id": "safe-triangle-utility",
+    "title": "SafeTriangle utility for custom menus",
+    "method": "SafeTriangle",
+    "description": "Build your own menu system and still reuse the safe-triangle geometry logic.",
+    "tags": ["safe triangle", "menu aim", "utility"],
+    "code": "import { SafeTriangle } from 'prediction-cone';\n\nconst tracker = new SafeTriangle({ delay: 150, padding: 2 });\n\ntracker.activate({ x: 240, y: 180 }, submenuRect);\n\nif (tracker.isInSafeZone(pointerX, pointerY)) {\n  // keep submenu open\n}"
+  }
+]
+

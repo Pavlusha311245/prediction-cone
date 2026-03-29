@@ -1,5 +1,9 @@
 # API Reference
 
+For a narrative walkthrough with variants (prediction cone vs safe triangle/safety triangle dropdown), see [DETAILED_GUIDE.md](DETAILED_GUIDE.md).
+
+For editable examples, open [examples/vanilla/docs.html](../examples/vanilla/docs.html).
+
 ## `createPredictionConeMenu(options)`
 
 Creates a new prediction cone menu instance.

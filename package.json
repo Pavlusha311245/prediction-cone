@@ -1,7 +1,7 @@
 {
   "name": "prediction-cone",
   "version": "0.2.0",
-  "description": "Zero-dependency TypeScript radial menu with prediction cone selection — items are chosen by pointer direction within a configurable angular cone",
+  "description": "Zero-dependency TypeScript radial and dropdown menu library with prediction cone selection and safe triangle (safety triangle) submenu navigation",
   "license": "MIT",
   "author": "Pavel Zavadski",
   "repository": {
@@ -15,6 +15,7 @@
   "keywords": [
     "radial-menu",
     "prediction-cone",
+    "prediction cone",
     "context-menu",
     "pie-menu",
     "pointer",
@@ -22,6 +23,10 @@
     "menu",
     "nested-menu",
     "submenu",
+    "safe-triangle",
+    "safe triangle",
+    "safety triangle",
+    "menu-aim",
     "triangle-navigation",
     "ui",
     "typescript",

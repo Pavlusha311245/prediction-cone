@@ -1,5 +1,7 @@
 # Examples
 
+Interactive API examples editor: [examples/vanilla/docs.html](../examples/vanilla/docs.html)
+
 ## Context Menu (Right-Click)
 
 ```typescript
