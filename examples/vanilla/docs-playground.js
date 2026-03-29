@@ -170,6 +170,8 @@ function startEdit(id) {
   saveBtn.textContent = "Save changes";
   cancelBtn.hidden = false;
   setFormValues(found);
+  // Signal the page to reveal the form if it's collapsed
+  document.dispatchEvent(new CustomEvent("pg:edit-start"));
   formEl.title.focus();
 }
 

@@ -17,19 +17,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
     <style>
-      /* ─── Tokens ─────────────────────────────────────────── */
+      /* ─── Tokens (synced with index.html) ───────────────── */
       :root {
-        --bg:           #f8fafc;
+        --bg:           #ffffff;
         --surface:      #ffffff;
-        --surface-2:    #f1f5f9;
-        --surface-3:    #e2e8f0;
-        --border:       #e2e8f0;
-        --text:         #0f172a;
-        --muted:        #64748b;
-        --muted-2:      #94a3b8;
-        --accent:       #7c3aed;
+        --surface-2:    #f5f5f8;
+        --surface-3:    #e4e4e7;
+        --border:       #e4e4e7;
+        --text:         #111118;
+        --muted:        #6b7280;
+        --muted-2:      #9ca3af;
+        --accent:       #5b21b6;
+        --accent-hover: #7c3aed;
         --accent-soft:  #ede9fe;
-        --accent-text:  #6d28d9;
+        --accent-text:  #7c3aed;
         --danger:       #dc2626;
         --danger-soft:  #fef2f2;
         --code-bg:      #0d1117;
@@ -44,19 +45,20 @@
       }
 
       [data-theme="dark"] {
-        --bg:          #09090b;
-        --surface:     #18181b;
-        --surface-2:   #27272a;
-        --surface-3:   #3f3f46;
-        --border:      #3f3f46;
-        --text:        #fafafa;
-        --muted:       #a1a1aa;
-        --muted-2:     #71717a;
-        --accent:      #a78bfa;
-        --accent-soft: #2e1065;
-        --accent-text: #c4b5fd;
-        --code-bg:     #0a0a0d;
-        --code-border: #27272a;
+        --bg:           #09090d;
+        --surface:      #111118;
+        --surface-2:    #18181e;
+        --surface-3:    #222228;
+        --border:       #2a2a36;
+        --text:         #f4f4f8;
+        --muted:        #71717a;
+        --muted-2:      #52525b;
+        --accent:       #7c3aed;
+        --accent-hover: #8b5cf6;
+        --accent-soft:  #1e1533;
+        --accent-text:  #a78bfa;
+        --code-bg:      #0d1117;
+        --code-border:  #21262d;
       }
 
       *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -69,6 +71,7 @@
         background: var(--bg);
         color: var(--text);
         -webkit-font-smoothing: antialiased;
+        transition: background 0.2s, color 0.2s;
       }
 
       /* ─── Topbar ─────────────────────────────────────────── */
@@ -99,15 +102,16 @@
       }
 
       .topbar-brand-icon {
-        width: 30px;
-        height: 30px;
-        border-radius: 7px;
-        background: linear-gradient(135deg, #7c3aed, #a855f7);
+        width: 28px;
+        height: 28px;
+        border-radius: 6px;
+        background: var(--accent);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 15px;
+        font-size: 14px;
         flex-shrink: 0;
+        transition: background var(--tr);
       }
 
       .topbar-version {
@@ -430,26 +434,51 @@
       .m-tag-class { background: #14532d; color: #86efac; }
 
       /* ─── Playground ─────────────────────────────────────── */
-      .pg-layout {
-        display: grid;
-        grid-template-columns: 300px 1fr;
-        gap: 20px;
-        align-items: start;
+      .pg-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 24px;
       }
 
-      .pg-form {
-        background: var(--surface);
+      .pg-header-text h2 { border: none; padding: 0; margin: 0; }
+      .pg-header-text p  { margin-top: 6px; }
+
+      .pg-toggle-btn {
+        flex-shrink: 0;
+        align-self: center;
+        padding: 8px 16px;
+        font-size: 13px;
+      }
+
+      .pg-form-wrap {
         border: 1px solid var(--border);
         border-radius: var(--radius);
-        padding: 16px;
+        background: var(--surface);
+        padding: 24px;
+        margin-bottom: 32px;
+        transition: border-color var(--tr);
       }
 
-      .pg-form-title {
-        font-size: 13px;
-        font-weight: 600;
-        margin-bottom: 14px;
-        padding-bottom: 10px;
-        border-bottom: 1px solid var(--border);
+      .pg-form-wrap[hidden] { display: none; }
+
+      .pg-fields {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px 24px;
+        margin-bottom: 16px;
+      }
+
+      .pg-fields .ff-full { grid-column: 1 / -1; }
+
+      .label-note {
+        font-size: 10px;
+        font-weight: 400;
+        text-transform: none;
+        letter-spacing: 0;
+        color: var(--muted-2);
       }
 
       .frow { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -462,7 +491,7 @@
         text-transform: uppercase;
         letter-spacing: 0.05em;
         color: var(--muted-2);
-        margin-bottom: 4px;
+        margin-bottom: 5px;
       }
 
       input, textarea, select {
@@ -471,52 +500,65 @@
         background: var(--surface-2);
         color: var(--text);
         border-radius: 6px;
-        padding: 7px 10px;
+        padding: 8px 11px;
         font-family: inherit;
         font-size: 13px;
         outline: none;
-        transition: border-color var(--tr);
+        transition: border-color var(--tr), background var(--tr);
         appearance: none;
         -webkit-appearance: none;
       }
 
-      input:focus, textarea:focus, select:focus { border-color: var(--accent); }
+      input:focus, textarea:focus, select:focus {
+        border-color: var(--accent);
+        background: var(--bg);
+      }
 
       textarea { resize: vertical; min-height: 80px; }
-      #code { font-family: var(--mono); font-size: 12px; min-height: 130px; }
+      #code { font-family: var(--mono); font-size: 12.5px; min-height: 180px; }
 
       /* ─── Buttons ────────────────────────────────────────── */
       .btn {
         display: inline-flex;
         align-items: center;
         gap: 5px;
-        padding: 6px 12px;
+        padding: 7px 14px;
         border: 1px solid var(--border);
         background: var(--surface-2);
         color: var(--text);
         border-radius: 6px;
         font: inherit;
-        font-size: 12px;
+        font-size: 13px;
         font-weight: 500;
         cursor: pointer;
-        transition: border-color var(--tr), background var(--tr);
+        transition: border-color var(--tr), background var(--tr), color var(--tr);
         white-space: nowrap;
       }
 
-      .btn:hover { border-color: var(--accent); }
+      .btn:hover { border-color: var(--accent); color: var(--accent-text); }
 
-      .btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
-      .btn-primary:hover { opacity: 0.88; }
+      .btn-primary {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #fff;
+      }
+
+      .btn-primary:hover {
+        background: var(--accent-hover);
+        border-color: var(--accent-hover);
+        color: #fff;
+        opacity: 1;
+      }
 
       .btn-danger { color: var(--danger); }
-      .btn-danger:hover { border-color: var(--danger); background: var(--danger-soft); }
+      .btn-danger:hover { border-color: var(--danger); background: var(--danger-soft); color: var(--danger); }
 
-      .fa { display: flex; gap: 6px; flex-wrap: wrap; padding-top: 4px; }
+      .fa { display: flex; gap: 8px; flex-wrap: wrap; }
 
       /* ─── Examples panel ─────────────────────────────────── */
       .pg-panel { min-width: 0; }
 
-      .pg-toolbar { display: flex; gap: 8px; margin-bottom: 14px; }
+      .pg-toolbar { display: flex; gap: 8px; margin-bottom: 16px; }
 
       .search-wrap { position: relative; flex: 1; }
 
@@ -533,77 +575,81 @@
 
       #searchInput { padding-left: 30px; }
 
-      .pg-meta { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+      .pg-meta { font-size: 12px; color: var(--muted); margin-bottom: 14px; }
 
-      /* ── Example card ───────────────────────────────────── */
+      /* ─── Example card ───────────────────────────────────── */
       .ex-card {
         border: 1px solid var(--border);
         border-radius: var(--radius);
         background: var(--surface);
         overflow: hidden;
-        margin-bottom: 10px;
-        transition: border-color var(--tr);
+        margin-bottom: 14px;
+        transition: border-color var(--tr), box-shadow var(--tr);
       }
 
-      .ex-card:hover { border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); }
+      .ex-card:hover {
+        border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+        box-shadow: 0 2px 12px color-mix(in srgb, var(--accent) 8%, transparent);
+      }
 
       .ex-head {
-        padding: 10px 14px;
+        padding: 12px 16px;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 10px;
+        gap: 12px;
         border-bottom: 1px solid var(--border);
         background: var(--surface-2);
       }
 
-      .ex-head h3 { font-size: 13px; font-weight: 600; flex: 1; min-width: 0; }
-      .ex-actions { display: flex; gap: 4px; flex-shrink: 0; }
-      .ex-actions .btn { padding: 4px 8px; font-size: 11px; }
+      .ex-head h3 { font-size: 14px; font-weight: 600; flex: 1; min-width: 0; }
+      .ex-actions { display: flex; gap: 6px; flex-shrink: 0; }
+      .ex-actions .btn { padding: 5px 10px; font-size: 12px; }
 
-      .ex-body { padding: 12px 14px; }
+      .ex-body { padding: 16px; }
 
       .m-chip {
         display: inline-flex;
         align-items: center;
-        font-size: 11px;
+        font-size: 12px;
         font-family: var(--mono);
-        padding: 2px 7px;
+        padding: 3px 8px;
         border-radius: 4px;
         background: var(--accent-soft);
         color: var(--accent-text);
-        margin-bottom: 7px;
+        margin-bottom: 10px;
       }
 
       .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
 
       .tag {
         font-size: 11px;
-        padding: 1px 7px;
+        padding: 2px 8px;
         border-radius: 999px;
         border: 1px solid var(--border);
         color: var(--muted);
       }
 
-      .ex-desc { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+      .ex-desc { font-size: 13px; color: var(--muted); margin-bottom: 12px; line-height: 1.5; }
 
       .ex-code pre {
         border-radius: 6px;
         border: 1px solid var(--code-border);
-        max-height: 200px;
+        max-height: 340px;
         overflow: auto;
-        padding: 12px;
-        font-size: 12px;
+        padding: 16px;
+        font-size: 12.5px;
+        line-height: 1.6;
       }
 
       /* ─── Empty / meta ───────────────────────────────────── */
       .empty-state {
         text-align: center;
-        padding: 40px 20px;
+        padding: 56px 20px;
         border: 1px dashed var(--border);
         border-radius: var(--radius);
         color: var(--muted);
-        font-size: 13px;
+        font-size: 14px;
       }
 
       hr { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
@@ -625,18 +671,22 @@
       @media (max-width: 1024px) {
         .main { padding: 32px 28px 60px; }
         .footer { padding: 20px 28px; }
+        .pg-fields { grid-template-columns: 1fr 1fr; }
       }
 
       @media (max-width: 860px) {
         .sidebar { display: none; }
-        .pg-layout { grid-template-columns: 1fr; }
         .variant-grid { grid-template-columns: 1fr 1fr; }
+        .pg-fields { grid-template-columns: 1fr; }
+        .pg-fields .ff-full { grid-column: 1; }
       }
 
       @media (max-width: 540px) {
         .variant-grid { grid-template-columns: 1fr; }
         .main { padding: 20px 16px 60px; }
         .topbar-link { display: none; }
+        .pg-form-wrap { padding: 16px; }
+        .pg-header { gap: 10px; }
       }
     </style>
   </head>
@@ -648,14 +698,14 @@
         <div class="topbar-brand-icon">🔮</div>
         <span>prediction-cone</span>
       </a>
-      <span class="topbar-version">v1.x</span>
+      <span class="topbar-version">v0.2</span>
 
       <div class="topbar-sep"></div>
 
       <nav class="topbar-links">
         <a href="./index.html" class="topbar-link">Demo</a>
-        <a href="../../docs/API.md" class="topbar-link">API.md</a>
-        <a href="../../CHANGELOG.md" class="topbar-link">Changelog</a>
+        <a href="https://github.com/Pavlusha311245/prediction-cone/blob/main/docs/API.md" class="topbar-link" target="_blank" rel="noopener">API.md ↗</a>
+        <a href="https://github.com/Pavlusha311245/prediction-cone/blob/main/CHANGELOG.md" class="topbar-link" target="_blank" rel="noopener">Changelog ↗</a>
         <a href="https://github.com/Pavlusha311245/prediction-cone" class="topbar-link" target="_blank" rel="noopener">GitHub ↗</a>
       </nav>
 
@@ -695,8 +745,8 @@
           <div class="nav-group">
             <div class="nav-group-label">Resources</div>
             <a href="#playground"             class="nav-item">Playground</a>
-            <a href="../../docs/EXAMPLES.md"  class="nav-item">Examples.md ↗</a>
-            <a href="../../CHANGELOG.md"      class="nav-item">Changelog ↗</a>
+            <a href="https://github.com/Pavlusha311245/prediction-cone/blob/main/docs/EXAMPLES.md" class="nav-item" target="_blank" rel="noopener">Examples.md ↗</a>
+            <a href="https://github.com/Pavlusha311245/prediction-cone/blob/main/CHANGELOG.md"      class="nav-item" target="_blank" rel="noopener">Changelog ↗</a>
           </div>
         </nav>
       </aside>
@@ -1074,74 +1124,68 @@ tracker.stop();</code></pre>
 
         <!-- ── Playground ──────────────────────────────── -->
         <section id="playground" class="section">
-          <h2 class="section-title">API Playground</h2>
-          <p>Add, edit, and manage annotated code snippets. Stored in <code>localStorage</code> — use Export to share as JSON.</p>
+          <div class="pg-header">
+            <div class="pg-header-text">
+              <h2 class="section-title">API Playground</h2>
+              <p>Add, edit, and manage annotated code snippets. Stored in <code>localStorage</code> — use Export to share as JSON.</p>
+            </div>
+            <button class="btn pg-toggle-btn" id="pgFormToggle" type="button">⊖ Hide form</button>
+          </div>
 
-          <div class="pg-layout">
-
-            <!-- Form -->
-            <div>
-              <form id="exampleForm" class="pg-form">
-                <div class="pg-form-title">New example</div>
-
-                <div class="frow">
-                  <div class="ff">
-                    <label for="id">ID <span style="text-transform:none;font-weight:400;letter-spacing:0">(optional)</span></label>
-                    <input id="id" name="id" placeholder="auto" />
-                  </div>
-                  <div class="ff">
-                    <label for="method">Method</label>
-                    <select id="method" name="method">
-                      <option>createPredictionConeMenu</option>
-                      <option>createDropdownMenu</option>
-                      <option>SafeTriangle</option>
-                      <option>MouseTracker</option>
-                    </select>
-                  </div>
+          <!-- Add / Edit form -->
+          <div id="pgFormWrap" class="pg-form-wrap">
+            <form id="exampleForm">
+              <div class="pg-fields">
+                <div class="ff">
+                  <label for="id">ID <span class="label-note">(optional, auto-generated)</span></label>
+                  <input id="id" name="id" placeholder="e.g. cone-basic" />
                 </div>
-
+                <div class="ff">
+                  <label for="method">Method</label>
+                  <select id="method" name="method">
+                    <option>createPredictionConeMenu</option>
+                    <option>createDropdownMenu</option>
+                    <option>SafeTriangle</option>
+                    <option>MouseTracker</option>
+                  </select>
+                </div>
                 <div class="ff">
                   <label for="title">Title</label>
                   <input id="title" name="title" placeholder="Example title" />
                 </div>
-
                 <div class="ff">
-                  <label for="description">Description</label>
-                  <textarea id="description" name="description" placeholder="What does this example show?" style="min-height:66px"></textarea>
-                </div>
-
-                <div class="ff">
-                  <label for="tags">Tags <span style="text-transform:none;font-weight:400;letter-spacing:0">(comma-separated)</span></label>
+                  <label for="tags">Tags <span class="label-note">(comma-separated)</span></label>
                   <input id="tags" name="tags" placeholder="safe triangle, submenu, debug" />
                 </div>
-
-                <div class="ff">
+                <div class="ff ff-full">
+                  <label for="description">Description</label>
+                  <textarea id="description" name="description" placeholder="What does this example show?" style="min-height:80px"></textarea>
+                </div>
+                <div class="ff ff-full">
                   <label for="code">Code</label>
                   <textarea id="code" name="code" placeholder="// TypeScript / JavaScript…"></textarea>
                 </div>
-
-                <div class="fa">
-                  <button class="btn btn-primary" id="saveBtn" type="submit">Add example</button>
-                  <button class="btn" id="cancelEditBtn" type="button" hidden>Cancel</button>
-                </div>
-              </form>
-            </div>
-
-            <!-- Examples list -->
-            <div class="pg-panel">
-              <div class="pg-toolbar">
-                <div class="search-wrap">
-                  <input id="searchInput" aria-label="Search examples" placeholder="Search by id, title, method, tag…" />
-                </div>
-                <button class="btn" id="resetBtn" type="button">Reset</button>
-                <button class="btn" id="exportBtn" type="button">Export</button>
               </div>
+              <div class="fa">
+                <button class="btn btn-primary" id="saveBtn" type="submit">Add example</button>
+                <button class="btn" id="cancelEditBtn" type="button" hidden>Cancel edit</button>
+              </div>
+            </form>
+          </div>
 
-              <p class="pg-meta">Examples: <strong id="examplesCount">0</strong></p>
-              <div id="examplesList"></div>
-              <p id="emptyState" class="empty-state" hidden>No examples found.</p>
+          <!-- Examples list -->
+          <div class="pg-panel">
+            <div class="pg-toolbar">
+              <div class="search-wrap">
+                <input id="searchInput" aria-label="Search examples" placeholder="Search by id, title, method, tag…" />
+              </div>
+              <button class="btn" id="resetBtn" type="button">Reset</button>
+              <button class="btn" id="exportBtn" type="button">Export ↓</button>
             </div>
 
+            <p class="pg-meta">Showing <strong id="examplesCount">0</strong> example(s)</p>
+            <div id="examplesList"></div>
+            <p id="emptyState" class="empty-state" hidden>No examples found. Add one above ↑</p>
           </div>
         </section>
 
@@ -1156,10 +1200,10 @@ tracker.stop();</code></pre>
     <footer class="footer">
       prediction-cone — MIT license ·
       <a href="https://github.com/Pavlusha311245/prediction-cone" target="_blank" rel="noopener">GitHub ↗</a> ·
-      <a href="../../docs/API.md">Full API.md</a>
+      <a href="https://github.com/Pavlusha311245/prediction-cone/blob/main/docs/API.md" target="_blank" rel="noopener">Full API.md ↗</a>
     </footer>
 
-    <!-- Static code-block copy buttons + sidebar active tracking -->
+    <!-- Static code-block copy buttons + sidebar active tracking + playground toggle -->
     <script>
       document.querySelectorAll('.code-copy[data-target]').forEach(btn => {
         btn.addEventListener('click', async () => {
@@ -1174,6 +1218,7 @@ tracker.stop();</code></pre>
         });
       });
 
+      // Sidebar active-link tracking
       const io = new IntersectionObserver(entries => {
         for (const e of entries) {
           if (e.isIntersecting) {
@@ -1183,8 +1228,25 @@ tracker.stop();</code></pre>
           }
         }
       }, { rootMargin: `-${56 + 8}px 0px -65% 0px` });
-
       document.querySelectorAll('.section[id]').forEach(s => io.observe(s));
+
+      // Playground form toggle
+      const pgToggle  = document.getElementById('pgFormToggle');
+      const pgFormWrap = document.getElementById('pgFormWrap');
+
+      function showPgForm() {
+        pgFormWrap.hidden = false;
+        pgToggle.textContent = '⊖ Hide form';
+      }
+
+      pgToggle.addEventListener('click', () => {
+        const nowHidden = !pgFormWrap.hidden;
+        pgFormWrap.hidden = nowHidden;
+        pgToggle.textContent = nowHidden ? '＋ Add example' : '⊖ Hide form';
+      });
+
+      // Show form when edit is triggered from a card
+      document.addEventListener('pg:edit-start', () => showPgForm());
     </script>
 
     <script type="module" src="./docs-playground.js"></script>
