@@ -1,27 +1,59 @@
 [
   {
     "id": "cone-basic",
-    "title": "Prediction cone: basic context menu",
+    "title": "Radial menu: basic context menu",
     "method": "createPredictionConeMenu",
-    "description": "Right-click anywhere to open a radial menu and select by pointer direction.",
-    "tags": ["prediction cone", "contextmenu"],
-    "code": "import { createPredictionConeMenu } from 'prediction-cone';\n\nconst menu = createPredictionConeMenu({\n  items: [\n    { id: 'copy', label: 'Copy', icon: '📋' },\n    { id: 'paste', label: 'Paste', icon: '📌' },\n  ],\n});\n\nmenu.attach(document, { trigger: 'contextmenu' });"
+    "description": "Right-click anywhere on the page to open a radial menu. Move the pointer in any direction — the item in that cone is selected on release.",
+    "tags": ["prediction cone", "contextmenu", "basic"],
+    "code": "import { createPredictionConeMenu } from 'prediction-cone';\n\nconst menu = createPredictionConeMenu({\n  items: [\n    { id: 'cut',     label: '✂️ Cut'     },\n    { id: 'copy',    label: '📋 Copy'    },\n    { id: 'paste',   label: '📌 Paste'   },\n    { id: 'settings',label: '⚙️ Settings'},\n  ],\n  ringRadius:       120,\n  itemSize:         60,\n  coneHalfAngleDeg: 22.5,\n  deadzone:         30,\n});\n\nmenu.attach(document, { trigger: 'contextmenu' });\nmenu.on('select', ({ item }) => console.log('Selected:', item?.label));"
+  },
+  {
+    "id": "cone-dynamic-items",
+    "title": "Radial menu: dynamic items at runtime",
+    "method": "createPredictionConeMenu",
+    "description": "Replace the item list without destroying the menu. Useful for context-sensitive menus that change based on the hovered element.",
+    "tags": ["prediction cone", "setItems", "dynamic"],
+    "code": "import { createPredictionConeMenu } from 'prediction-cone';\n\nconst menu = createPredictionConeMenu({\n  items: [],\n  ringRadius: 110,\n});\n\nmenu.attach(document, { trigger: 'contextmenu' });\n\ndocument.addEventListener('contextmenu', (e) => {\n  const target = e.target as HTMLElement;\n  const isLink = target.closest('a') !== null;\n\n  menu.setItems(\n    isLink\n      ? [\n          { id: 'open',     label: '🔗 Open link'    },\n          { id: 'copy-url', label: '📋 Copy URL'      },\n          { id: 'save',     label: '💾 Save link as…' },\n        ]\n      : [\n          { id: 'cut',   label: '✂️ Cut'   },\n          { id: 'copy',  label: '📋 Copy'  },\n          { id: 'paste', label: '📌 Paste' },\n        ]\n  );\n});"
+  },
+  {
+    "id": "cone-with-viz",
+    "title": "Radial menu: debug cone visualisation",
+    "method": "createPredictionConeMenu",
+    "description": "Enable showViz to render a canvas overlay that draws the active prediction cone and deadzone in real time — useful during development.",
+    "tags": ["prediction cone", "debug", "showViz"],
+    "code": "import { createPredictionConeMenu } from 'prediction-cone';\n\nconst menu = createPredictionConeMenu({\n  items: [\n    { id: 'a', label: '🅰 Alpha' },\n    { id: 'b', label: '🅱 Beta'  },\n    { id: 'c', label: '🎯 Gamma' },\n    { id: 'd', label: '🔺 Delta' },\n  ],\n  ringRadius:       130,\n  coneHalfAngleDeg: 30,\n  deadzone:         40,\n  showViz:          true,\n});\n\nmenu.attach(document.getElementById('canvas-area')!, {\n  trigger: 'pointerdown',\n});\n\n// Toggle at runtime:\n// menu.setOptions({ showViz: false });"
   },
   {
     "id": "dropdown-safe-triangle",
-    "title": "Dropdown: safe triangle submenu",
+    "title": "Dropdown: safe triangle submenu (v0.3)",
     "method": "createDropdownMenu",
-    "description": "Use nested children and safe triangle prediction to keep submenus open during diagonal pointer movement.",
-    "tags": ["safe triangle", "safety triangle", "submenu"],
-    "code": "import { createDropdownMenu } from 'prediction-cone';\n\nconst dropdown = createDropdownMenu({\n  items: [\n    {\n      id: 'file',\n      label: 'File',\n      children: [\n        { id: 'new', label: 'New' },\n        { id: 'open', label: 'Open' },\n      ],\n    },\n  ],\n  submenuDelay: 150,\n});\n\ndropdown.attach(document.getElementById('menu-btn')!, { trigger: 'click' });"
+    "description": "Nested items open a submenu. The v0.3 safe triangle keeps it open while the cursor travels diagonally — powered by velocity prediction and speed-adaptive padding.",
+    "tags": ["safe triangle", "submenu", "v0.3"],
+    "code": "import { createDropdownMenu } from 'prediction-cone';\n\nconst dropdown = createDropdownMenu({\n  items: [\n    {\n      id: 'file', label: 'File', icon: '📁',\n      children: [\n        { id: 'new',    label: 'New File',   icon: '📄' },\n        { id: 'open',   label: 'Open…',      icon: '📂' },\n        { id: 'save',   label: 'Save',       icon: '💾' },\n        { id: 'sep',    separator: true },\n        { id: 'export', label: 'Export As…', icon: '📤' },\n      ],\n    },\n    {\n      id: 'edit', label: 'Edit', icon: '✏️',\n      children: [\n        { id: 'undo',  label: 'Undo',  icon: '↩️' },\n        { id: 'redo',  label: 'Redo',  icon: '↪️' },\n        { id: 'sep2',  separator: true },\n        { id: 'copy',  label: 'Copy',  icon: '📋' },\n        { id: 'paste', label: 'Paste', icon: '📄' },\n      ],\n    },\n    { id: 'help', label: 'Help', icon: '❓' },\n  ],\n  submenuDelay: 150,\n});\n\ndropdown.attach(document.getElementById('menu-btn')!, { trigger: 'click' });\ndropdown.on('select', ({ item, parentItem }) => {\n  console.log(`${parentItem?.label ?? ''} › ${item?.label}`);\n});"
+  },
+  {
+    "id": "dropdown-debug",
+    "title": "Dropdown: safe-triangle debug overlay",
+    "method": "createDropdownMenu",
+    "description": "Pass debug: true to render the safe-triangle canvas overlay. The filled triangle shows the safe zone; the apex follows the cursor as you move toward the submenu.",
+    "tags": ["safe triangle", "debug", "canvas"],
+    "code": "import { createDropdownMenu } from 'prediction-cone';\n\nconst dropdown = createDropdownMenu({\n  items: [\n    {\n      id: 'actions', label: 'Actions', icon: '⚡',\n      children: [\n        { id: 'run',    label: 'Run',    icon: '▶️' },\n        { id: 'stop',   label: 'Stop',   icon: '⏹️' },\n        { id: 'restart',label: 'Restart',icon: '🔄' },\n      ],\n    },\n    { id: 'settings', label: 'Settings', icon: '⚙️' },\n  ],\n  submenuDelay: 200,\n  debug: true,\n});\n\ndropdown.attach(document.getElementById('app')!, { trigger: 'contextmenu' });"
   },
   {
     "id": "safe-triangle-utility",
-    "title": "SafeTriangle utility for custom menus",
+    "title": "SafeTriangle: utility for custom menus",
     "method": "SafeTriangle",
-    "description": "Build your own menu system and still reuse the safe-triangle geometry logic.",
-    "tags": ["safe triangle", "menu aim", "utility"],
-    "code": "import { SafeTriangle } from 'prediction-cone';\n\nconst tracker = new SafeTriangle({ delay: 150, padding: 2 });\n\ntracker.activate({ x: 240, y: 180 }, submenuRect);\n\nif (tracker.isInSafeZone(pointerX, pointerY)) {\n  // keep submenu open\n}"
+    "description": "Use the SafeTriangle class directly in your own menu system to get diagonal-movement tolerance. v0.3 adds updateApex() for continuous apex tracking.",
+    "tags": ["safe triangle", "menu aim", "utility", "v0.3"],
+    "code": "import { SafeTriangle } from 'prediction-cone';\n\nconst st = new SafeTriangle({ delay: 150, padding: 2 });\n\n// When a submenu opens, activate with cursor position + submenu rect\nst.activate({ x: 240, y: 180 }, submenuEl.getBoundingClientRect());\n\n// Keep apex fresh while the cursor moves (v0.3)\ndocument.addEventListener('pointermove', (e) => {\n  st.updateApex({ x: e.clientX, y: e.clientY });\n\n  if (!st.isInSafeZone(e.clientX, e.clientY)) {\n    closeSubmenu();\n  }\n});\n\nfunction closeSubmenu() {\n  st.deactivate();\n}"
+  },
+  {
+    "id": "mouse-tracker",
+    "title": "MouseTracker: velocity & position",
+    "method": "MouseTracker",
+    "description": "Track pointer position and velocity with RAF-throttled updates. Useful for custom gesture recognition or animation tied to cursor speed.",
+    "tags": ["mouse tracker", "velocity", "animation"],
+    "code": "import { MouseTracker } from 'prediction-cone';\n\nconst tracker = new MouseTracker();\ntracker.start();\n\nfunction render() {\n  const { x, y, vx, vy } = tracker.getState();\n  const speed = Math.sqrt(vx ** 2 + vy ** 2);\n\n  indicator.style.transform = `scale(${1 + speed * 0.5})`;\n\n  requestAnimationFrame(render);\n}\n\nrequestAnimationFrame(render);\n\n// tracker.stop();"
   }
 ]
 

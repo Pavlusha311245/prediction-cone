@@ -806,14 +806,21 @@ const menu = createPredictionConeMenu({
   deadzone: 30,
 });
 
-menu.on('select', ({ item }) => console.log('Selected:', item.id));
-menu.attach(document, { trigger: 'contextmenu' });</code></pre>
+// Attach to the entire page
+menu.attach(document, { trigger: 'contextmenu' });
+
+// Events
+menu.on('select', ({ item }) => console.log('Selected:', item?.label));
+menu.on('change', ({ item }) => console.log('Highlighted:', item?.label));
+
+// Cleanup later
+// menu.destroy();</code></pre>
           </div>
 
           <h3>Dropdown with safe triangle submenus</h3>
           <div class="code-block">
             <div class="code-header">
-              <span class="code-filename">main.ts</span>
+              <span class="code-filename">dropdown-menu.ts</span>
               <button class="code-copy" data-target="code-dropdown-basic">Copy</button>
             </div>
             <pre id="code-dropdown-basic"><code>import { createDropdownMenu } from 'prediction-cone';
@@ -821,18 +828,39 @@ menu.attach(document, { trigger: 'contextmenu' });</code></pre>
 const dropdown = createDropdownMenu({
   items: [
     {
-      id: 'file',
-      label: 'File',
+      id: 'file', label: 'File', icon: '📁',
       children: [
-        { id: 'new',  label: 'New'  },
-        { id: 'open', label: 'Open' },
+        { id: 'new',    label: 'New File',   icon: '📄' },
+        { id: 'open',   label: 'Open…',      icon: '📂' },
+        { id: 'save',   label: 'Save',       icon: '💾' },
+        { id: 'sep',    separator: true },
+        { id: 'export', label: 'Export As…', icon: '📤' },
       ],
     },
+    {
+      id: 'edit', label: 'Edit', icon: '✏️',
+      children: [
+        { id: 'undo',  label: 'Undo',  icon: '↩️' },
+        { id: 'redo',  label: 'Redo',  icon: '↪️' },
+        { id: 'sep2',  separator: true },
+        { id: 'copy',  label: 'Copy',  icon: '📋' },
+        { id: 'paste', label: 'Paste', icon: '📄', disabled: false },
+      ],
+    },
+    { id: 'help', label: 'Help', icon: '❓' },
   ],
-  submenuDelay: 150,
+  submenuDelay: 150,  // grace period for diagonal pointer movement
+  debug: false,       // set true to render safe-triangle canvas overlay
 });
 
-dropdown.attach(document.getElementById('btn')!, { trigger: 'click' });</code></pre>
+dropdown.attach(document.getElementById('menu-btn')!, { trigger: 'click' });
+
+dropdown.on('select', ({ item, parentItem }) => {
+  console.log(`${parentItem?.label ?? ''} › ${item?.label}`);
+});
+
+// Change items at runtime
+dropdown.setItems([{ id: 'new-item', label: 'Dynamic item', icon: '✨' }]);</code></pre>
           </div>
         </section>
 
@@ -1059,8 +1087,27 @@ unsub(); // ← removes the listener</code></pre>
                   <td><span class="t-default">"light"</span></td>
                   <td>Visual theme</td>
                 </tr>
+                <tr>
+                  <td class="t-prop">debug</td>
+                  <td><span class="t-type">boolean</span></td>
+                  <td><span class="t-default">false</span></td>
+                  <td>Render safe-triangle canvas overlay (development only)</td>
+                </tr>
               </tbody>
             </table>
+          </div>
+
+          <h3>DropdownItem</h3>
+          <div class="code-block">
+            <pre><code>interface DropdownItem {
+  id:          string;
+  label?:      string;
+  icon?:       string | HTMLElement;
+  children?:   DropdownItem[];   // → opens a submenu
+  separator?:  boolean;          // → renders a divider row
+  disabled?:   boolean;
+  danger?:     boolean;          // → red text variant
+}</code></pre>
           </div>
         </section>
 

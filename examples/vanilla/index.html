@@ -10,11 +10,11 @@
     <meta name="keywords" content="radial menu, prediction cone, safe triangle, safety triangle, menu aim, context menu, pie menu, pointer gesture, typescript, javascript, ui library, zero dependency" />
     <meta name="author" content="Pavel Zavadski" />
     <meta name="robots" content="index, follow" />
-    <link rel="canonical" href="https://pavlusha311245.github.io/prediction-cone/" />
+    <link rel="canonical" href="https://prediction-cone.pavlusha.me/" />
 
     <!-- ── Open Graph ─────────────────────────────── -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://pavlusha311245.github.io/prediction-cone/" />
+    <meta property="og:url" content="https://prediction-cone.pavlusha.me/" />
     <meta property="og:title" content="Prediction Cone + Safe Triangle - TypeScript Menu Library" />
     <meta property="og:description" content="TypeScript radial and dropdown menu with prediction cone and safe triangle (safety triangle) submenu navigation." />
     <meta property="og:image" content="https://opengraph.githubassets.com/1/Pavlusha311245/prediction-cone" />
@@ -42,40 +42,17 @@
       "description": "Zero-dependency TypeScript radial and dropdown menu with prediction cone selection and safe triangle (safety triangle) submenu navigation",
       "url": "https://github.com/Pavlusha311245/prediction-cone",
       "codeRepository": "https://github.com/Pavlusha311245/prediction-cone",
-      "programmingLanguage": {
-        "@type": "ComputerLanguage",
-        "name": "TypeScript"
-      },
-      "author": {
-        "@type": "Person",
-        "name": "Pavel Zavadski",
-        "url": "https://github.com/Pavlusha311245"
-      },
+      "programmingLanguage": { "@type": "ComputerLanguage", "name": "TypeScript" },
+      "author": { "@type": "Person", "name": "Pavel Zavadski", "url": "https://github.com/Pavlusha311245" },
       "license": "https://opensource.org/licenses/MIT",
-      "version": "0.2.0",
-      "keywords": "radial menu, prediction cone, safe triangle, safety triangle, menu aim, context menu, pie menu, typescript, javascript, zero-dependency",
-      "targetProduct": {
-        "@type": "SoftwareApplication",
-        "name": "prediction-cone",
-        "applicationCategory": "DeveloperApplication",
-        "operatingSystem": "Any",
-        "softwareVersion": "0.2.0",
-        "downloadUrl": "https://www.npmjs.com/package/prediction-cone",
-        "offers": {
-          "@type": "Offer",
-          "price": "0",
-          "priceCurrency": "USD"
-        }
-      }
+      "version": "0.3.0"
     }
     </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
     <style>
       *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -112,21 +89,17 @@
 
       body {
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-        background: var(--bg);
-        color: var(--text);
-        line-height: 1.6;
-        -webkit-font-smoothing: antialiased;
+        background: var(--bg); color: var(--text);
+        line-height: 1.6; -webkit-font-smoothing: antialiased;
         transition: background 0.2s, color 0.2s;
       }
 
       /* ── Nav ─────────────────────────────────────── */
       nav {
-        position: sticky; top: 0; z-index: 50;
-        height: 54px;
+        position: sticky; top: 0; z-index: 50; height: 54px;
         display: flex; align-items: center; justify-content: space-between;
         padding: 0 1.5rem;
-        backdrop-filter: blur(14px);
-        -webkit-backdrop-filter: blur(14px);
+        backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
         background: color-mix(in srgb, var(--bg) 80%, transparent);
         border-bottom: 1px solid var(--border);
         transition: background 0.2s, border-color 0.2s;
@@ -135,16 +108,12 @@
       .nav-logo {
         display: flex; align-items: center; gap: 0.5rem;
         font-weight: 600; font-size: 0.9rem;
-        color: var(--text); text-decoration: none;
-        letter-spacing: -0.01em;
+        color: var(--text); text-decoration: none; letter-spacing: -0.01em;
       }
 
       .nav-logo-mark {
-        width: 26px; height: 26px;
-        background: var(--accent);
-        border-radius: 6px;
-        display: grid; place-items: center;
-        font-size: 13px; flex-shrink: 0;
+        width: 26px; height: 26px; background: var(--accent); border-radius: 6px;
+        display: grid; place-items: center; font-size: 13px; flex-shrink: 0;
       }
 
       .nav-right { display: flex; align-items: center; gap: 0.75rem; }
@@ -156,17 +125,12 @@
       .nav-link:hover { color: var(--text); }
 
       .icon-btn {
-        width: 34px; height: 34px;
-        border: 1px solid var(--border); border-radius: 6px;
-        background: transparent; cursor: pointer;
-        display: grid; place-items: center;
+        width: 34px; height: 34px; border: 1px solid var(--border); border-radius: 6px;
+        background: transparent; cursor: pointer; display: grid; place-items: center;
         font-size: 15px; color: var(--text-muted);
         transition: color 0.15s, border-color 0.15s, background 0.15s;
       }
-      .icon-btn:hover {
-        color: var(--text); border-color: var(--accent);
-        background: var(--accent-subtle);
-      }
+      .icon-btn:hover { color: var(--text); border-color: var(--accent); background: var(--accent-subtle); }
 
       /* ── Hero ────────────────────────────────────── */
       .hero {
@@ -195,21 +159,13 @@
       }
 
       h1 {
-        font-size: clamp(2rem, 5vw, 3.25rem);
-        font-weight: 700; line-height: 1.15;
-        letter-spacing: -0.03em; color: var(--text);
-        margin-bottom: 1rem;
+        font-size: clamp(2rem, 5vw, 3.25rem); font-weight: 700; line-height: 1.15;
+        letter-spacing: -0.03em; color: var(--text); margin-bottom: 1rem;
       }
 
-      .hero-desc {
-        font-size: 1.05rem; color: var(--text-muted);
-        max-width: 500px; margin: 0 auto 2.5rem;
-      }
+      .hero-desc { font-size: 1.05rem; color: var(--text-muted); max-width: 500px; margin: 0 auto 2.5rem; }
 
-      .hero-actions {
-        display: flex; align-items: center;
-        justify-content: center; gap: 0.625rem; flex-wrap: wrap;
-      }
+      .hero-actions { display: flex; align-items: center; justify-content: center; gap: 0.625rem; flex-wrap: wrap; }
 
       .btn {
         display: inline-flex; align-items: center; gap: 0.4rem;
@@ -225,14 +181,10 @@
       .btn-fill:hover { background: var(--accent-hover); transform: translateY(-1px); }
 
       .btn-outline {
-        border-color: var(--border); color: var(--text-muted);
-        background: transparent;
+        border-color: var(--border); color: var(--text-muted); background: transparent;
         font-family: 'JetBrains Mono', monospace; font-size: 0.82rem;
       }
-      .btn-outline:hover {
-        border-color: var(--accent); color: var(--accent-text);
-        background: var(--accent-subtle); transform: translateY(-1px);
-      }
+      .btn-outline:hover { border-color: var(--accent); color: var(--accent-text); background: var(--accent-subtle); transform: translateY(-1px); }
 
       /* ── Layout ──────────────────────────────────── */
       main { max-width: 860px; margin: 0 auto; padding: 0 1.5rem 6rem; }
@@ -245,28 +197,23 @@
         color: var(--accent-text); margin-bottom: 0.35rem;
       }
 
-      .section-title {
-        font-size: 1.4rem; font-weight: 600;
-        letter-spacing: -0.02em; margin-bottom: 0.6rem;
-      }
+      .section-title { font-size: 1.4rem; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 0.6rem; }
 
       .section-desc { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.25rem; }
 
       /* ── Demo ────────────────────────────────────── */
-      .demo-frame {
-        border: 1px solid var(--border); border-radius: 10px;
-        overflow: hidden; transition: border-color 0.2s;
-      }
+      .demo-frame { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; transition: border-color 0.2s; }
 
       .demo-titlebar {
         background: var(--bg-subtle); border-bottom: 1px solid var(--border);
         padding: 0.6rem 0.875rem;
-        display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;
+        display: flex; align-items: center; justify-content: space-between; gap: 0.625rem;
+        flex-wrap: wrap;
         transition: background 0.2s, border-color 0.2s;
       }
 
       .dots { display: flex; gap: 5px; }
-      .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); }
+      .dot { width: 10px; height: 10px; border-radius: 50%; }
       .dot:nth-child(1) { background: #ff5f57; }
       .dot:nth-child(2) { background: #febc2e; }
       .dot:nth-child(3) { background: #28c840; }
@@ -279,10 +226,31 @@
         transition: color 0.15s, border-color 0.15s, background 0.15s;
       }
       .trigger-chip:hover { color: var(--accent-text); border-color: var(--accent); }
-      .trigger-chip.active {
-        color: var(--accent-text); border-color: var(--accent);
-        background: var(--accent-subtle);
+      .trigger-chip.active { color: var(--accent-text); border-color: var(--accent); background: var(--accent-subtle); }
+
+      /* ── Toggle switch ───────────────────────────── */
+      .check-toggle {
+        display: inline-flex; align-items: center; gap: 0.4rem;
+        font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;
+        color: var(--text-muted); cursor: pointer; user-select: none;
+        transition: color 0.15s;
       }
+      .check-toggle:hover { color: var(--accent-text); }
+      .check-toggle input { display: none; }
+
+      .toggle-track {
+        width: 30px; height: 17px; border-radius: 999px;
+        background: var(--border); position: relative;
+        transition: background 0.2s; flex-shrink: 0;
+      }
+      .toggle-track::after {
+        content: ''; position: absolute; left: 2px; top: 2px;
+        width: 13px; height: 13px; border-radius: 50%;
+        background: white; transition: transform 0.2s;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      }
+      .check-toggle input:checked ~ .toggle-track { background: var(--accent); }
+      .check-toggle input:checked ~ .toggle-track::after { transform: translateX(13px); }
 
       /* ── PM switcher ─────────────────────────────── */
       .pm-block {
@@ -293,8 +261,7 @@
 
       .pm-tabs {
         background: #161b22; border-bottom: 1px solid var(--border-code);
-        padding: 0 1rem;
-        display: flex; align-items: center; gap: 0;
+        padding: 0 1rem; display: flex; align-items: center;
       }
 
       .pm-tab {
@@ -302,10 +269,12 @@
         border: none; border-bottom: 2px solid transparent;
         padding: 0.5rem 0.75rem; cursor: pointer;
         font-family: inherit; transition: color 0.15s, border-color 0.15s;
-        margin-bottom: -1px;
+        margin-bottom: -1px; display: flex; align-items: center; gap: 0.3rem;
       }
       .pm-tab:hover { color: #f0f6fc; }
-      .pm-tab.active { color: #f0f6fc; border-bottom-color: var(--accent-text, #a78bfa); }
+      .pm-tab.active { color: #f0f6fc; border-bottom-color: #a78bfa; }
+
+      .pm-tab-icon { font-size: 0.9rem; }
 
       .pm-copy-btn {
         margin-left: auto; font-size: 0.72rem; color: #8b949e; background: transparent;
@@ -317,46 +286,50 @@
 
       .pm-line {
         background: var(--bg-code); padding: 0.875rem 1.5rem;
-        font-size: 0.85rem; line-height: 1.5; color: #c9d1d9;
-        display: none;
+        font-size: 0.85rem; line-height: 1.5; color: #c9d1d9; display: none;
       }
       .pm-line.active { display: block; }
-
       .pm-line .tc { color: #8b949e; }
       .pm-line .ts { color: #a5d6ff; }
 
       .demo-body {
-        min-height: 280px;
-        display: flex; align-items: center; justify-content: center;
-        background: var(--bg); cursor: context-menu;
-        user-select: none; transition: background 0.2s;
+        min-height: 280px; display: flex; align-items: center; justify-content: center;
+        background: var(--bg); cursor: context-menu; user-select: none;
+        transition: background 0.2s;
       }
       .demo-body:hover { background: var(--bg-subtle); }
 
       .demo-inner { text-align: center; pointer-events: none; }
-
       .demo-hint { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; }
-
-      .demo-result {
-        font-size: 1.05rem; font-weight: 600;
-        color: var(--text-muted); min-height: 1.6rem; transition: color 0.25s;
-      }
+      .demo-result { font-size: 1.05rem; font-weight: 600; color: var(--text-muted); min-height: 1.6rem; transition: color 0.25s; }
       .demo-result.active { color: var(--accent-text); }
 
       /* ── Code block ──────────────────────────────── */
       .code-block {
         border: 1px solid var(--border-code); border-radius: 10px;
-        overflow: hidden;
-        font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+        overflow: hidden; font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
       }
 
       .code-topbar {
         background: #161b22; border-bottom: 1px solid var(--border-code);
-        padding: 0.5rem 1rem;
-        display: flex; align-items: center; justify-content: space-between;
+        padding: 0; display: flex; align-items: stretch;
       }
 
-      .code-fname { font-size: 0.72rem; color: #8b949e; font-family: inherit; }
+      .code-tabs { display: flex; flex: 1; }
+
+      .code-tab {
+        font-size: 0.72rem; color: #8b949e; background: transparent;
+        border: none; border-bottom: 2px solid transparent;
+        padding: 0.5rem 0.875rem; cursor: pointer;
+        font-family: inherit; transition: color 0.15s, border-color 0.15s;
+        margin-bottom: -1px;
+      }
+      .code-tab:hover { color: #f0f6fc; }
+      .code-tab.active { color: #f0f6fc; border-bottom-color: #a78bfa; }
+
+      .code-topbar-right { display: flex; align-items: center; padding: 0 0.75rem; }
+
+      .code-fname { font-size: 0.72rem; color: #8b949e; font-family: inherit; padding: 0.5rem 0.875rem; }
 
       .copy-btn {
         font-size: 0.72rem; color: #8b949e; background: transparent;
@@ -367,6 +340,7 @@
       .copy-btn:hover { color: #f0f6fc; border-color: #6e7681; }
 
       .code-scroll { background: var(--bg-code); padding: 1.25rem 1.5rem; overflow-x: auto; }
+      .code-scroll[hidden] { display: none; }
 
       .code-scroll pre {
         margin: 0; font-size: 0.83rem; line-height: 1.75;
@@ -377,19 +351,18 @@
       .ts { color: #a5d6ff; }
       .tf { color: #d2a8ff; }
       .tn { color: #79c0ff; }
+      .tc { color: #8b949e; }
+      .tst { color: #7ee787; }
 
       /* ── API list ────────────────────────────────── */
       .api-list {
-        display: grid; gap: 1px;
-        background: var(--border);
-        border: 1px solid var(--border);
-        border-radius: 10px; overflow: hidden;
+        display: grid; gap: 1px; background: var(--border);
+        border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
       }
 
       .api-card {
         background: var(--bg); padding: 0.875rem 1.25rem;
-        display: flex; align-items: baseline; gap: 1.25rem;
-        transition: background 0.15s;
+        display: flex; align-items: baseline; gap: 1.25rem; transition: background 0.15s;
       }
       .api-card:hover { background: var(--bg-subtle); }
 
@@ -397,9 +370,7 @@
         font-family: 'JetBrains Mono', monospace; font-size: 0.82rem;
         color: var(--accent-text); white-space: nowrap; flex-shrink: 0;
       }
-
       .api-card p { font-size: 0.875rem; color: var(--text-muted); }
-
       .api-card p code {
         font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;
         background: var(--accent-subtle); color: var(--accent-text);
@@ -407,37 +378,36 @@
       }
 
       /* ── CSS var chips ───────────────────────────── */
-      .var-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-        gap: 0.5rem;
-      }
+      .var-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 0.5rem; }
 
       .var-chip {
         border: 1px solid var(--border); border-radius: 8px;
-        padding: 0.75rem 1rem; background: var(--bg-subtle);
-        transition: border-color 0.15s;
+        padding: 0.75rem 1rem; background: var(--bg-subtle); transition: border-color 0.15s;
       }
       .var-chip:hover { border-color: var(--accent); }
-
-      .var-name {
-        font-family: 'JetBrains Mono', monospace; font-size: 0.78rem;
-        color: var(--accent-text); margin-bottom: 0.25rem;
-      }
+      .var-name { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--accent-text); margin-bottom: 0.25rem; }
       .var-desc { font-size: 0.8rem; color: var(--text-muted); }
+
+      /* ── Velocity debug panel ─────────────────────── */
+      .debug-panel {
+        margin-top: 1rem; font-size: 0.75rem;
+        font-family: 'JetBrains Mono', monospace; color: var(--text-muted);
+        text-align: left;
+        background: color-mix(in srgb, var(--bg-subtle) 90%, var(--accent-subtle));
+        border: 1px solid var(--border); padding: 0.75rem; border-radius: 6px;
+        max-width: 300px; margin-left: auto; margin-right: auto;
+        display: grid; grid-template-columns: auto 1fr; gap: 0.2rem 0.75rem;
+      }
+      .debug-panel dt { color: var(--text-muted); }
+      .debug-panel dd { color: var(--accent-text); font-weight: 500; }
 
       /* ── Footer ──────────────────────────────────── */
       footer {
-        border-top: 1px solid var(--border);
-        padding: 1.75rem 1.5rem;
-        display: flex; align-items: center;
-        justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;
+        border-top: 1px solid var(--border); padding: 1.75rem 1.5rem;
+        display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;
         font-size: 0.82rem; color: var(--text-muted);
       }
-
-      footer a {
-        color: var(--text-muted); text-decoration: none; transition: color 0.15s;
-      }
+      footer a { color: var(--text-muted); text-decoration: none; transition: color 0.15s; }
       footer a:hover { color: var(--accent-text); }
     </style>
   </head>
@@ -457,19 +427,20 @@
 
     <section class="hero">
       <div class="hero-grid" aria-hidden="true"></div>
-      <div class="hero-badge">v0.2 · TypeScript · Zero deps</div>
+      <div class="hero-badge">v0.3 · TypeScript · Zero deps</div>
       <h1>Radial menus that predict<br />where you're going</h1>
       <p class="hero-desc">
         Open a context menu and select items by moving your pointer in a direction —
-        not by hovering over them. Includes safe triangle (safety triangle) dropdown submenu navigation.
+        not by hovering over them. Includes safe triangle dropdown submenu navigation
+        with velocity prediction.
       </p>
       <div class="hero-actions">
         <a href="#demo" class="btn btn-fill">Try the demo →</a>
         <a href="#quickstart" class="btn btn-outline">Quick start</a>
-        <a href="./docs.html" class="btn btn-outline">Interactive docs</a>
+        <a href="./docs.html" class="btn btn-outline">Docs</a>
       </div>
 
-      <div class="pm-block" style="margin-top: 2rem; text-align: left; max-width: 420px; margin-left: auto; margin-right: auto;">
+      <div class="pm-block" style="margin-top: 2rem; text-align: left; max-width: 440px; margin-left: auto; margin-right: auto;">
         <div class="pm-tabs">
           <button class="pm-tab active" data-pm="npm">npm</button>
           <button class="pm-tab" data-pm="yarn">yarn</button>
@@ -486,21 +457,24 @@
 
     <main>
 
+      <!-- ── Radial menu demo ──────────────────────── -->
       <div class="section" id="demo">
         <div class="section-eyebrow">Interactive</div>
-        <h2 class="section-title">See it in action</h2>
+        <h2 class="section-title">Radial menu — prediction cone</h2>
         <p class="section-desc" id="instruction">
-          Click inside the area below, then move your pointer in any direction.
+          Click inside the area below, then move your pointer in any direction to select.
         </p>
         <div class="demo-frame">
           <div class="demo-titlebar">
             <div class="dots">
-              <div class="dot"></div>
-              <div class="dot"></div>
-              <div class="dot"></div>
+              <div class="dot"></div><div class="dot"></div><div class="dot"></div>
             </div>
             <button class="trigger-chip" id="triggerSelectToggle">trigger: pointerdown</button>
-            <button class="trigger-chip" id="coneVizToggle" title="Toggle cone debug overlay">🎯 viz: off</button>
+            <label class="check-toggle" title="Toggle cone debug overlay">
+              <input type="checkbox" id="coneVizCheck" />
+              <span class="toggle-track"></span>
+              🎯 cone viz
+            </label>
           </div>
           <div class="demo-body" id="demoArea" style="cursor: pointer;">
             <div class="demo-inner">
@@ -511,49 +485,70 @@
         </div>
       </div>
 
+      <!-- ── Dropdown demo ──────────────────────────── -->
       <div class="section" id="dropdown-demo">
-        <div class="section-eyebrow">New in v0.2</div>
-        <h2 class="section-title">Dropdown with triangle navigation</h2>
+        <div class="section-eyebrow">Safe Triangle — v0.3</div>
+        <h2 class="section-title">Dropdown with velocity prediction</h2>
         <p class="section-desc">
-          Right-click below. Items with children open a submenu — the triangle prediction
-          keeps it open while you move diagonally toward it.
+          Right-click below. Submenus stay open while you move diagonally toward them —
+          powered by <strong>cursor velocity prediction</strong>, <strong>directional gating</strong>,
+          and <strong>speed-adaptive triangle padding</strong>.
         </p>
         <div class="demo-frame">
           <div class="demo-titlebar">
             <div class="dots">
-              <div class="dot"></div>
-              <div class="dot"></div>
-              <div class="dot"></div>
+              <div class="dot"></div><div class="dot"></div><div class="dot"></div>
             </div>
             <span style="font-size: 0.75rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">createDropdownMenu</span>
-            <button class="trigger-chip" id="triangleDebugToggle" title="Toggle safe-triangle debug overlay">🔺 triangle: off</button>
+            <label class="check-toggle" title="Show safe-triangle debug canvas">
+              <input type="checkbox" id="triangleDebugCheck" />
+              <span class="toggle-track"></span>
+              🔺 triangle
+            </label>
+            <label class="check-toggle" title="Show velocity & prediction stats">
+              <input type="checkbox" id="velocityDebugCheck" />
+              <span class="toggle-track"></span>
+              📊 stats
+            </label>
           </div>
           <div class="demo-body" id="dropdownArea" style="cursor: context-menu;">
             <div class="demo-inner">
               <p class="demo-hint">Right-click to open the dropdown menu</p>
               <div class="demo-result" id="dropdownDisplay">—</div>
+              <dl id="velocityDebugPanel" class="debug-panel" hidden>
+                <dt>velocity</dt>  <dd><span id="velDisplay">0.000</span> px/ms</dd>
+                <dt>predicted Δ</dt><dd><span id="predDeltaDisplay">0</span> px</dd>
+                <dt>speed pad</dt> <dd><span id="speedPaddingDisplay">0.0</span> px</dd>
+                <dt>toward sub</dt><dd><span id="towardDisplay">—</span></dd>
+              </dl>
             </div>
           </div>
         </div>
       </div>
 
+      <!-- ── Quick start ────────────────────────────── -->
       <div class="section" id="quickstart">
         <div class="section-eyebrow">Getting started</div>
         <h2 class="section-title">Quick start</h2>
         <div class="code-block">
           <div class="code-topbar">
-            <span class="code-fname">main.ts</span>
-            <button class="copy-btn" id="copyBtn">Copy</button>
+            <div class="code-tabs">
+              <button class="code-tab active" data-tab="cone">🎯 Radial menu</button>
+              <button class="code-tab" data-tab="dropdown">📋 Dropdown</button>
+            </div>
+            <div class="code-topbar-right">
+              <button class="copy-btn" id="copyBtn">Copy</button>
+            </div>
           </div>
-          <div class="code-scroll">
+          <div class="code-scroll" id="codeTabCone">
             <pre><span class="tk">import</span> { createPredictionConeMenu } <span class="tk">from</span> <span class="ts">'prediction-cone'</span>;
 
 <span class="tk">const</span> menu = <span class="tf">createPredictionConeMenu</span>({
   items: [
-    { id: <span class="ts">'home'</span>,     label: <span class="ts">'🏠 Home'</span>     },
-    { id: <span class="ts">'profile'</span>,  label: <span class="ts">'👤 Profile'</span>  },
+    { id: <span class="ts">'cut'</span>,     label: <span class="ts">'✂️ Cut'</span>     },
+    { id: <span class="ts">'copy'</span>,    label: <span class="ts">'📋 Copy'</span>    },
+    { id: <span class="ts">'paste'</span>,   label: <span class="ts">'📌 Paste'</span>   },
     { id: <span class="ts">'settings'</span>, label: <span class="ts">'⚙️ Settings'</span> },
-    { id: <span class="ts">'logout'</span>,   label: <span class="ts">'🚪 Logout'</span>   },
   ],
   ringRadius:       <span class="tn">120</span>,
   itemSize:         <span class="tn">60</span>,
@@ -561,29 +556,66 @@
   deadzone:         <span class="tn">30</span>,
 });
 
-menu.<span class="tf">attach</span>(document);
+<span class="tc">// Attach to the whole page — right-click anywhere</span>
+menu.<span class="tf">attach</span>(document, { trigger: <span class="ts">'contextmenu'</span> });
 
-menu.<span class="tf">on</span>(<span class="ts">'select'</span>, (e) => {
-  console.<span class="tf">log</span>(<span class="ts">'Selected:'</span>, e.item?.label);
+menu.<span class="tf">on</span>(<span class="ts">'select'</span>, ({ item }) => {
+  console.<span class="tf">log</span>(<span class="ts">'Selected:'</span>, item?.label);
+});</pre>
+          </div>
+          <div class="code-scroll" id="codeTabDropdown" hidden>
+            <pre><span class="tk">import</span> { createDropdownMenu } <span class="tk">from</span> <span class="ts">'prediction-cone'</span>;
+
+<span class="tk">const</span> dropdown = <span class="tf">createDropdownMenu</span>({
+  items: [
+    {
+      id: <span class="ts">'file'</span>, label: <span class="ts">'File'</span>, icon: <span class="ts">'📁'</span>,
+      children: [
+        { id: <span class="ts">'new'</span>,    label: <span class="ts">'New File'</span>,   icon: <span class="ts">'📄'</span> },
+        { id: <span class="ts">'open'</span>,   label: <span class="ts">'Open…'</span>,     icon: <span class="ts">'📂'</span> },
+        { id: <span class="ts">'save'</span>,   label: <span class="ts">'Save'</span>,       icon: <span class="ts">'💾'</span> },
+      ],
+    },
+    {
+      id: <span class="ts">'edit'</span>, label: <span class="ts">'Edit'</span>, icon: <span class="ts">'✏️'</span>,
+      children: [
+        { id: <span class="ts">'undo'</span>,  label: <span class="ts">'Undo'</span>,  icon: <span class="ts">'↩️'</span> },
+        { id: <span class="ts">'redo'</span>,  label: <span class="ts">'Redo'</span>,  icon: <span class="ts">'↪️'</span> },
+        { id: <span class="ts">'sep'</span>,   separator: <span class="tn">true</span> },
+        { id: <span class="ts">'copy'</span>,  label: <span class="ts">'Copy'</span>,  icon: <span class="ts">'📋'</span> },
+        { id: <span class="ts">'paste'</span>, label: <span class="ts">'Paste'</span>, icon: <span class="ts">'📄'</span> },
+      ],
+    },
+    { id: <span class="ts">'help'</span>, label: <span class="ts">'Help'</span>, icon: <span class="ts">'❓'</span> },
+  ],
+  submenuDelay: <span class="tn">150</span>, <span class="tc">// grace period for diagonal movement</span>
+});
+
+<span class="tc">// Right-click any element to open</span>
+dropdown.<span class="tf">attach</span>(document.<span class="tf">getElementById</span>(<span class="ts">'app'</span>)!, { trigger: <span class="ts">'contextmenu'</span> });
+
+dropdown.<span class="tf">on</span>(<span class="ts">'select'</span>, ({ item, parentItem }) => {
+  console.<span class="tf">log</span>(<span class="ts">'Selected:'</span>, item?.label, <span class="ts">'in'</span>, parentItem?.label);
 });</pre>
           </div>
         </div>
       </div>
 
+      <!-- ── API ────────────────────────────────────── -->
       <div class="section" id="api">
         <div class="section-eyebrow">Reference</div>
         <h2 class="section-title">API</h2>
         <div class="api-list">
           <div class="api-card">
             <span class="api-sig">.attach(element, options?)</span>
-            <p>Attach to a DOM element. Opens on the configured trigger event.</p>
+            <p>Attach to a DOM element. Opens on the configured trigger event (<code>click</code>, <code>contextmenu</code>, <code>pointerdown</code>).</p>
           </div>
           <div class="api-card">
-            <span class="api-sig">.detach()</span>
+            <span class="api-sig">.detach(target?)</span>
             <p>Remove all event listeners previously added by <code>.attach()</code>.</p>
           </div>
           <div class="api-card">
-            <span class="api-sig">.openAt(x, y, ctx?)</span>
+            <span class="api-sig">.openAt(x, y)</span>
             <p>Open the menu programmatically at given viewport coordinates.</p>
           </div>
           <div class="api-card">
@@ -596,7 +628,11 @@ menu.<span class="tf">on</span>(<span class="ts">'select'</span>, (e) => {
           </div>
           <div class="api-card">
             <span class="api-sig">.on(event, handler)</span>
-            <p>Subscribe to <code>open</code>, <code>close</code>, <code>change</code>, or <code>select</code> events.</p>
+            <p>Subscribe to <code>open</code>, <code>close</code>, <code>change</code>, or <code>select</code> events. Returns unsubscribe function.</p>
+          </div>
+          <div class="api-card">
+            <span class="api-sig">.destroy()</span>
+            <p>Full cleanup — removes DOM, listeners and debug canvas.</p>
           </div>
         </div>
 
@@ -604,15 +640,24 @@ menu.<span class="tf">on</span>(<span class="ts">'select'</span>, (e) => {
         <div class="api-list" style="margin-top: 0.75rem;">
           <div class="api-card">
             <span class="api-sig">createDropdownMenu(options)</span>
-            <p>Create a list-based dropdown with triangle submenu navigation.</p>
+            <p>Create a list-based dropdown with velocity-predictive safe triangle submenu navigation.</p>
           </div>
           <div class="api-card">
             <span class="api-sig">item.children</span>
-            <p>Add nested <code>ConeItem[]</code> to show a submenu with triangle-safe hover prediction.</p>
+            <p>Add nested <code>ConeItem[]</code> to show a submenu. Triangle zone adapts to cursor speed automatically.</p>
+          </div>
+          <div class="api-card">
+            <span class="api-sig">item.separator</span>
+            <p>Set <code>separator: true</code> to render a horizontal divider row.</p>
+          </div>
+          <div class="api-card">
+            <span class="api-sig">item.danger / item.disabled</span>
+            <p>Visual modifiers — <code>danger</code> renders the item in red, <code>disabled</code> disables interaction.</p>
           </div>
         </div>
       </div>
 
+      <!-- ── Theming ────────────────────────────────── -->
       <div class="section" id="theming">
         <div class="section-eyebrow">Customization</div>
         <h2 class="section-title">CSS variables</h2>
@@ -637,14 +682,14 @@ menu.<span class="tf">on</span>(<span class="ts">'select'</span>, (e) => {
     <script type="module">
       import { createPredictionConeMenu, createDropdownMenu } from '../../dist/index.mjs';
 
-      // ── Radial menu demo ───────────────────────────────
+      // ────────────────────────────── Radial menu demo ─────
       const menu = createPredictionConeMenu({
         items: [
-          { id: 'home',     label: '🏠 Home'     },
-          { id: 'profile',  label: '👤 Profile'  },
-          { id: 'settings', label: '⚙️ Settings' },
-          { id: 'help',     label: '❓ Help'      },
-          { id: 'logout',   label: '🚪 Logout'   },
+          { id: 'cut',     label: '✂️ Cut'     },
+          { id: 'copy',    label: '📋 Copy'    },
+          { id: 'paste',   label: '📌 Paste'   },
+          { id: 'settings',label: '⚙️ Settings'},
+          { id: 'help',    label: '❓ Help'     },
         ],
         ringRadius: 120, itemSize: 56,
         coneHalfAngleDeg: 22.5, deadzone: 30,
@@ -660,71 +705,120 @@ menu.<span class="tf">on</span>(<span class="ts">'select'</span>, (e) => {
         el.textContent = `✓ ${e.item.label}`;
         el.classList.add('active');
         clearTimeout(el._timer);
-        el._timer = setTimeout(() => {
-          el.textContent = '—';
-          el.classList.remove('active');
-        }, 2500);
+        el._timer = setTimeout(() => { el.textContent = '—'; el.classList.remove('active'); }, 2500);
       });
 
-      // ── Dropdown menu demo ──────────────────────────────
+      // Cone viz checkbox
+      document.getElementById('coneVizCheck').addEventListener('change', (e) => {
+        menu.setOptions({ showViz: e.target.checked });
+      });
+
+      // Trigger toggle
+      let trigger = 'pointerdown';
+      const chipBtn = document.getElementById('triggerSelectToggle');
+      const instr   = document.getElementById('instruction');
+
+      chipBtn.addEventListener('click', () => {
+        trigger = trigger === 'contextmenu' ? 'pointerdown' : 'contextmenu';
+        menu.detach();
+        menu.attach(document.getElementById('demoArea'), { trigger });
+        chipBtn.textContent = `trigger: ${trigger}`;
+        document.getElementById('demoArea').style.cursor = trigger === 'contextmenu' ? 'context-menu' : 'pointer';
+        instr.textContent = trigger === 'contextmenu'
+          ? 'Right-click inside the area below, then move your pointer.'
+          : 'Click inside the area below, then move your pointer.';
+      });
+
+      // ────────────────────────────── Dropdown menu demo ───
       const dropdownItems = [
-          { id: 'file', label: 'File', icon: '📁', children: [
-            { id: 'new',    label: 'New File',    icon: '📄' },
-            { id: 'open',   label: 'Open...',     icon: '📂' },
-            { id: 'save',   label: 'Save',        icon: '💾' },
-            { id: 'export', label: 'Export As...', icon: '📤' },
-          ]},
-          { id: 'edit', label: 'Edit', icon: '✏️', children: [
-            { id: 'undo',  label: 'Undo',  icon: '↩️' },
-            { id: 'redo',  label: 'Redo',  icon: '↪️' },
-            { id: 'cut',   label: 'Cut',   icon: '✂️' },
-            { id: 'copy',  label: 'Copy',  icon: '📋' },
-            { id: 'paste', label: 'Paste', icon: '📄' },
-          ]},
-          { id: 'view',   label: 'View',   icon: '👁️' },
-          { id: 'help',   label: 'Help',   icon: '❓' },
+        { id: 'file', label: 'File', icon: '📁', children: [
+          { id: 'new',    label: 'New File',     icon: '📄' },
+          { id: 'open',   label: 'Open…',        icon: '📂' },
+          { id: 'save',   label: 'Save',         icon: '💾' },
+          { id: 'sep1',   separator: true },
+          { id: 'export', label: 'Export As…',   icon: '📤' },
+        ]},
+        { id: 'edit', label: 'Edit', icon: '✏️', children: [
+          { id: 'undo',  label: 'Undo',  icon: '↩️' },
+          { id: 'redo',  label: 'Redo',  icon: '↪️' },
+          { id: 'sep2',  separator: true },
+          { id: 'cut',   label: 'Cut',   icon: '✂️' },
+          { id: 'copy',  label: 'Copy',  icon: '📋' },
+          { id: 'paste', label: 'Paste', icon: '📄' },
+        ]},
+        { id: 'view', label: 'View', icon: '👁️' },
+        { id: 'help', label: 'Help', icon: '❓' },
       ];
 
-      let triangleDebug = false;
+      // ── Velocity debug helpers ──────────────────────────
+      const LOOKAHEAD_MS   = 80;
+      const MAX_PREDICT_PX = 200;
+      const SPEED_K        = 20;
+      const MAX_SPEED_PAD  = 60;
+      const MIN_SPEED      = 0.05;
 
+      let lastPos = { x: 0, y: 0, t: 0 };
+      let lastVel = { vx: 0, vy: 0, speed: 0 };
+
+      function trackVelocity(now, x, y) {
+        if (!lastPos.t) { lastPos = { x, y, t: now }; return lastVel; }
+        const dt = now - lastPos.t;
+        if (dt <= 0) return lastVel;
+        const vx = (x - lastPos.x) / dt, vy = (y - lastPos.y) / dt;
+        lastPos = { x, y, t: now };
+        lastVel = { vx, vy, speed: Math.sqrt(vx ** 2 + vy ** 2) };
+        return lastVel;
+      }
+
+      function predictedDelta(vel) {
+        const dx = vel.vx * LOOKAHEAD_MS, dy = vel.vy * LOOKAHEAD_MS;
+        const d = Math.sqrt(dx ** 2 + dy ** 2);
+        return Math.min(d, MAX_PREDICT_PX);
+      }
+
+      // ── Create / recreate dropdown ─────────────────────
       function createDropdown(debug) {
-        const dd = createDropdownMenu({
-          items: dropdownItems,
-          debug,
-        });
-
+        const dd = createDropdownMenu({ items: dropdownItems, debug });
         dd.attach(document.getElementById('dropdownArea'), { trigger: 'contextmenu' });
-
         dd.on('select', ({ item }) => {
           const el = document.getElementById('dropdownDisplay');
           if (!item) return;
           el.textContent = `✓ ${item.label}`;
           el.classList.add('active');
           clearTimeout(el._timer);
-          el._timer = setTimeout(() => {
-            el.textContent = '—';
-            el.classList.remove('active');
-          }, 2500);
+          el._timer = setTimeout(() => { el.textContent = '—'; el.classList.remove('active'); }, 2500);
         });
-
         return dd;
       }
 
       let dropdown = createDropdown(false);
 
-      // ── Triangle debug toggle ─────────────────────────────
-      const triangleBtn = document.getElementById('triangleDebugToggle');
-      triangleBtn.addEventListener('click', () => {
-        triangleDebug = !triangleDebug;
-        triangleBtn.textContent = triangleDebug ? '🔺 triangle: on' : '🔺 triangle: off';
-        triangleBtn.classList.toggle('active', triangleDebug);
-
-        // Recreate dropdown with new debug flag
+      // Triangle checkbox
+      document.getElementById('triangleDebugCheck').addEventListener('change', (e) => {
+        if (dropdown.isOpen()) dropdown.close();
         dropdown.destroy();
-        dropdown = createDropdown(triangleDebug);
+        dropdown = createDropdown(e.target.checked);
       });
 
-      // Theme
+      // Velocity debug stats
+      const debugPanel = document.getElementById('velocityDebugPanel');
+      document.getElementById('velocityDebugCheck').addEventListener('change', (e) => {
+        debugPanel.hidden = !e.target.checked;
+        lastPos = { x: 0, y: 0, t: 0 };
+      });
+
+      document.getElementById('dropdownArea').addEventListener('pointermove', (e) => {
+        if (debugPanel.hidden) return;
+        const vel = trackVelocity(performance.now(), e.clientX, e.clientY);
+        const delta = predictedDelta(vel);
+        const pad = Math.min(vel.speed * SPEED_K, MAX_SPEED_PAD);
+        document.getElementById('velDisplay').textContent = vel.speed.toFixed(3);
+        document.getElementById('predDeltaDisplay').textContent = delta.toFixed(0);
+        document.getElementById('speedPaddingDisplay').textContent = pad.toFixed(1);
+        document.getElementById('towardDisplay').textContent = vel.speed < MIN_SPEED ? '(stationary)' : '→ moving';
+      });
+
+      // ── Theme ──────────────────────────────────────────
       const themeBtn = document.getElementById('themeToggle');
       const saved = localStorage.getItem('pcm-theme');
 
@@ -736,38 +830,73 @@ menu.<span class="tf">on</span>(<span class="ts">'select'</span>, (e) => {
       }
 
       if (saved) applyTheme(saved);
-
       themeBtn.addEventListener('click', () => {
         applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
       });
 
-      // Trigger toggle
-      let trigger = 'pointerdown';
-      const chipBtn = document.getElementById('triggerSelectToggle');
-      const instr = document.getElementById('instruction');
+      // ── Code tabs ──────────────────────────────────────
+      const codeTabCone     = document.getElementById('codeTabCone');
+      const codeTabDropdown = document.getElementById('codeTabDropdown');
 
-      chipBtn.addEventListener('click', () => {
-        trigger = trigger === 'contextmenu' ? 'pointerdown' : 'contextmenu';
-        menu.detach();
-        menu.attach(document.getElementById('demoArea'), { trigger });
-        chipBtn.textContent = `trigger: ${trigger}`;
-        document.getElementById('demoArea').style.cursor = trigger === 'contextmenu' ? 'context-menu' : 'pointer';
-        instr.textContent = trigger === 'contextmenu'
-          ? 'Right-click inside the area below, then move your pointer in any direction.'
-          : 'Click inside the area below, then move your pointer in any direction.';
+      const codeTexts = {
+        cone: `import { createPredictionConeMenu } from 'prediction-cone';
+
+const menu = createPredictionConeMenu({
+  items: [
+    { id: 'cut',      label: '✂️ Cut'      },
+    { id: 'copy',     label: '📋 Copy'     },
+    { id: 'paste',    label: '📌 Paste'    },
+    { id: 'settings', label: '⚙️ Settings' },
+  ],
+  ringRadius: 120, itemSize: 60,
+  coneHalfAngleDeg: 22.5, deadzone: 30,
+});
+
+menu.attach(document, { trigger: 'contextmenu' });
+menu.on('select', ({ item }) => console.log('Selected:', item?.label));`,
+
+        dropdown: `import { createDropdownMenu } from 'prediction-cone';
+
+const dropdown = createDropdownMenu({
+  items: [
+    {
+      id: 'file', label: 'File', icon: '📁',
+      children: [
+        { id: 'new',  label: 'New File', icon: '📄' },
+        { id: 'open', label: 'Open…',    icon: '📂' },
+        { id: 'save', label: 'Save',     icon: '💾' },
+      ],
+    },
+    {
+      id: 'edit', label: 'Edit', icon: '✏️',
+      children: [
+        { id: 'undo',  label: 'Undo',  icon: '↩️' },
+        { id: 'redo',  label: 'Redo',  icon: '↪️' },
+        { id: 'sep',   separator: true },
+        { id: 'copy',  label: 'Copy',  icon: '📋' },
+        { id: 'paste', label: 'Paste', icon: '📄' },
+      ],
+    },
+  ],
+  submenuDelay: 150,
+});
+
+dropdown.attach(document.getElementById('app'), { trigger: 'contextmenu' });
+dropdown.on('select', ({ item }) => console.log('Selected:', item?.label));`,
+      };
+
+      let activeTab = 'cone';
+
+      document.querySelectorAll('.code-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          activeTab = tab.dataset.tab;
+          document.querySelectorAll('.code-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === activeTab));
+          codeTabCone.hidden     = activeTab !== 'cone';
+          codeTabDropdown.hidden = activeTab !== 'dropdown';
+        });
       });
 
-      // Cone viz toggle
-      let coneViz = false;
-      const coneVizBtn = document.getElementById('coneVizToggle');
-      coneVizBtn.addEventListener('click', () => {
-        coneViz = !coneViz;
-        coneVizBtn.textContent = coneViz ? '🎯 viz: on' : '🎯 viz: off';
-        coneVizBtn.classList.toggle('active', coneViz);
-        menu.setOptions({ showViz: coneViz });
-      });
-
-      // PM switcher
+      // ── PM switcher ────────────────────────────────────
       const pmCommands = {
         npm:  'npm install prediction-cone',
         yarn: 'yarn add prediction-cone',
@@ -784,23 +913,7 @@ menu.<span class="tf">on</span>(<span class="ts">'select'</span>, (e) => {
         });
       });
 
-      // Copy buttons
-      const codeText = `import { createPredictionConeMenu } from 'prediction-cone';
-
-const menu = createPredictionConeMenu({
-  items: [
-    { id: 'home',     label: '🏠 Home'     },
-    { id: 'profile',  label: '👤 Profile'  },
-    { id: 'settings', label: '⚙️ Settings' },
-    { id: 'logout',   label: '🚪 Logout'   },
-  ],
-  ringRadius: 120, itemSize: 60,
-  coneHalfAngleDeg: 22.5, deadzone: 30,
-});
-
-menu.attach(document);
-menu.on('select', (e) => console.log('Selected:', e.item?.label));`;
-
+      // ── Copy buttons ───────────────────────────────────
       function withFeedback(btn, fn) {
         btn.addEventListener('click', async () => {
           await fn();
@@ -811,7 +924,7 @@ menu.on('select', (e) => console.log('Selected:', e.item?.label));`;
       }
 
       withFeedback(document.getElementById('copyBtn'),
-        () => navigator.clipboard.writeText(codeText));
+        () => navigator.clipboard.writeText(codeTexts[activeTab]));
 
       withFeedback(document.getElementById('installCopy'),
         () => navigator.clipboard.writeText(pmCommands[activePm]));

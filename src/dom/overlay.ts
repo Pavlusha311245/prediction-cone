@@ -444,7 +444,11 @@ export class DOMOverlay {
     // Select active item if any
     this.menu.selectActive();
 
-    // Close menu
+    // Reset core menu state so the next openAt() call fully re-initialises
+    // (computes angles, sizes, emits "open") instead of just moving the anchor.
+    this.menu.close();
+
+    // Hide the overlay
     this.close();
   }
 

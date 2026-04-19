@@ -148,13 +148,18 @@ export class SafeTriangle {
   }
 
   /**
-   * Update the apex while the pointer is still over the parent row.
+   * Update the apex while the pointer is moving toward (or over) the submenu.
    * Call this from a `pointermove` (ideally RAF-throttled) handler.
    * No-op if the safe zone is not active.
+   *
+   * @param apex          Current cursor position.
+   * @param extraPadding  Additional pixels added to the B/C vertices on top of
+   *                      the base `padding`.  Pass `speed * k` for a velocity-
+   *                      proportional wider triangle.  Default: 0.
    */
-  updateApex(apex: Point): void {
+  updateApex(apex: Point, extraPadding = 0): void {
     if (!this.active || !this.submenuRect) return;
-    this.computeVertices(apex, this.submenuRect);
+    this.computeVertices(apex, this.submenuRect, extraPadding);
     if (this.debugEnabled) this.draw();
   }
 
@@ -166,7 +171,7 @@ export class SafeTriangle {
   updateRect(rect: DOMRect): void {
     if (!this.active || !this.vertices) return;
     this.submenuRect = rect;
-    this.computeVertices(this.vertices.a, rect);
+    this.computeVertices(this.vertices.a, rect, 0);
     if (this.debugEnabled) this.draw();
   }
 
@@ -276,19 +281,20 @@ export class SafeTriangle {
    *  - rect.left  when the submenu is to the right of the cursor (common case)
    *  - rect.right when the submenu opened to the left (overflow fallback)
    *
-   * `padding` is subtracted from B.y (top) and added to C.y (bottom) to
-   * give a small tolerance above and below the submenu edges.
+   * `padding + extraPadding` is subtracted from B.y (top) and added to C.y
+   * (bottom) to give a tolerance above and below the submenu edges.
+   * `extraPadding` is caller-supplied (e.g. speed × k) and defaults to 0.
    */
-  private computeVertices(apex: Point, rect: DOMRect): void {
-    const { padding } = this;
+  private computeVertices(apex: Point, rect: DOMRect, extraPadding = 0): void {
+    const pad = this.padding + extraPadding;
     // Determine which side the submenu faces the cursor from
     const submenuIsRight = apex.x < rect.left + rect.width / 2;
     const nearX = submenuIsRight ? rect.left : rect.right;
 
     this.vertices = {
       a: apex,
-      b: { x: nearX, y: rect.top - padding },
-      c: { x: nearX, y: rect.bottom + padding },
+      b: { x: nearX, y: rect.top - pad },
+      c: { x: nearX, y: rect.bottom + pad },
     };
   }
 

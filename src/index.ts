@@ -36,15 +36,12 @@ class PredictionConeMenuFacade implements ConeMenuInstance {
     this.coreMenu = new PredictionConeMenu(options);
     this.domOverlay = new DOMOverlay(this.coreMenu, options);
     this.triggerManager = new TriggerManager(this.coreMenu, this.domOverlay);
-
-    // Listen to menu events and update DOM
-    this.coreMenu.on("open", () => {
-      void this.domOverlay.open();
-    });
-
-    this.coreMenu.on("close", () => {
-      this.domOverlay.close();
-    });
+    // NOTE: We deliberately do NOT subscribe to coreMenu "open"/"close" events
+    // here.  Both the TriggerManager (trigger path) and the facade's own
+    // openAt()/close() methods already call domOverlay.open()/close() directly.
+    // Adding event-listener subscriptions as well would cause domOverlay.open()
+    // to fire twice per open action, producing a double-focus / double-paint
+    // artifact on the radial menu overlay.
   }
 
   attach(target: Element | Document, attachOptions?: AttachOptions): void {
