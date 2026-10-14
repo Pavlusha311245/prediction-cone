@@ -83,11 +83,20 @@ jobs:
           name: dist
           path: dist/
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
+      - name: Setup Node for npm trusted publishing
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
 
       - name: Publish to npm
-        run: bun publish --access public --tolerate-republish
+        run: |
+          if npm view "prediction-cone@$(node -p 'require("./package.json").version')" version >/dev/null 2>&1; then
+            echo "Package version already exists on npm; skipping publish."
+          else
+            npm publish --access public --ignore-scripts
+          fi
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           CI_PUBLISH_SKIP_VERIFY: "1"

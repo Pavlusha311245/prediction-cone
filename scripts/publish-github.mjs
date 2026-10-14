@@ -24,10 +24,20 @@ writeFileSync(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`);
 console.log(`\n📦 Publishing ${scopedName} to GitHub Packages...`);
 
 try {
-  execSync("npm publish --registry https://npm.pkg.github.com --access public --ignore-scripts", {
-    stdio: "inherit",
-  });
-  console.log("\n✅ Successfully published to GitHub Packages");
+  try {
+    execSync(
+      `npm view ${scopedName}@${pkg.version} version --registry https://npm.pkg.github.com`,
+      {
+        stdio: "ignore",
+      }
+    );
+    console.log(`\nℹ️ ${scopedName}@${pkg.version} is already published`);
+  } catch {
+    execSync("npm publish --registry https://npm.pkg.github.com --access public --ignore-scripts", {
+      stdio: "inherit",
+    });
+    console.log("\n✅ Successfully published to GitHub Packages");
+  }
 } finally {
   pkg.name = originalName;
   writeFileSync(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`);
