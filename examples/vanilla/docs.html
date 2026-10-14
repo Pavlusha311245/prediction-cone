@@ -104,14 +104,9 @@
       .topbar-brand-icon {
         width: 28px;
         height: 28px;
-        border-radius: 6px;
-        background: var(--accent);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 14px;
+        display: block;
+        object-fit: contain;
         flex-shrink: 0;
-        transition: background var(--tr);
       }
 
       .topbar-version {
@@ -695,10 +690,10 @@
     <!-- ── Topbar ─────────────────────────────────────── -->
     <header class="topbar">
       <a href="./index.html" class="topbar-brand">
-        <div class="topbar-brand-icon">🔮</div>
+        <img class="topbar-brand-icon" src="./assets/prediction-cone-logo.png" width="28" height="28" alt="" />
         <span>prediction-cone</span>
       </a>
-      <span class="topbar-version">v0.2</span>
+      <span class="topbar-version">v0.3</span>
 
       <div class="topbar-sep"></div>
 

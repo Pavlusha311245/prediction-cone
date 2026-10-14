@@ -1,6 +1,6 @@
 {
   "name": "prediction-cone",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Zero-dependency TypeScript radial and dropdown menu library with prediction cone selection and safe triangle (safety triangle) submenu navigation",
   "license": "MIT",
   "author": "Pavel Zavadski",

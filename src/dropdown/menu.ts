@@ -78,19 +78,13 @@ const MAX_SPEED_PADDING = 60;
  */
 const MIN_SPEED = 0.05;
 
-/**
- * Pixel buffer around the submenu rect used in the hysteresis check inside
- * onSafeZoneExpiry().  If the cursor is within this many pixels of the submenu
- * and heading toward it, the safe zone is re-armed instead of closing.
- */
-const HYSTERESIS_PX = 32;
-
 // ─── DropdownMenu ─────────────────────────────────────────────────────────────
 
 export class DropdownMenu implements DropdownMenuInstance {
   // ── Config ────────────────────────────────────────────────────
   private items: ConeItem[];
   private readonly container: HTMLElement;
+  private readonly submenuDelayMs: number;
 
   // ── Events ────────────────────────────────────────────────────
   private emitter = new EventEmitter<{
@@ -139,11 +133,12 @@ export class DropdownMenu implements DropdownMenuInstance {
   constructor(options: DropdownMenuOptions) {
     this.items = options.items;
     this.container = options.container ?? document.body;
+    this.submenuDelayMs = options.submenuDelay ?? 150;
 
     this.mouseTracker = new MouseTracker(8);
 
     this.safeTriangle = new SafeTriangle({
-      delay: options.submenuDelay ?? 150,
+      delay: this.submenuDelayMs,
       debug: options.debug ?? false,
       padding: 2,
       onExpire: () => this.onSafeZoneExpiry(),
@@ -210,9 +205,9 @@ export class DropdownMenu implements DropdownMenuInstance {
     this.open = false;
     this.hideSubmenu();
 
-    // Detach single pointermove on menu panel
-    if (this.menuEl && this.menuMoveHandler) {
-      this.menuEl.removeEventListener("pointermove", this.menuMoveHandler);
+    // Detach document-level pointer tracking
+    if (this.menuMoveHandler) {
+      document.removeEventListener("pointermove", this.menuMoveHandler);
       this.menuMoveHandler = null;
     }
 
@@ -272,7 +267,7 @@ export class DropdownMenu implements DropdownMenuInstance {
     // parent-row hover (previously started only when a submenu opened).
     this.mouseTracker.start();
 
-    // ── Single pointermove on the parent panel ─────────────────────────────
+    // ── Pointer tracking across the menu and submenu gap ────────────────────
     // Fix #2: update apex whenever the safe zone is active, not only while
     // the pointer is over the parent row.  This keeps the triangle fresh as
     // the cursor travels through the gap between the row and the submenu.
@@ -285,13 +280,34 @@ export class DropdownMenu implements DropdownMenuInstance {
       if (this.lastPointerType === "touch") return;
 
       if (this.safeTriangle.isActive) {
-        const vel = this.mouseTracker.velocity;
-        const extraPadding = Math.min(vel.speed * SPEED_PADDING_K, MAX_SPEED_PADDING);
-        this.safeTriangle.updateApex({ x: pe.clientX, y: pe.clientY }, extraPadding);
+        const predicted = this.getPredictedPosition(pe.clientX, pe.clientY);
+        if (
+          this.safeTriangle.isInSafeZone(predicted.x, predicted.y) &&
+          this.isMovingTowardSubmenu(pe.clientX, pe.clientY)
+        ) {
+          const extraPadding = Math.min(
+            this.mouseTracker.velocity.speed * SPEED_PADDING_K,
+            MAX_SPEED_PADDING
+          );
+          this.safeTriangle.updateApex({ x: pe.clientX, y: pe.clientY }, extraPadding);
+          if (
+            !this.isInside(this.menuEl, pe.clientX, pe.clientY) &&
+            !this.isInside(this.submenuEl, pe.clientX, pe.clientY)
+          ) {
+            this.safeTriangle.startExpiry();
+          }
+          return;
+        }
       }
+
+      const inMenu = this.isInside(this.menuEl, pe.clientX, pe.clientY);
+      const inSubmenu = this.isInside(this.submenuEl, pe.clientX, pe.clientY);
+      if (inMenu || inSubmenu || this.isMovingTowardMenu(pe.clientX, pe.clientY)) return;
+
+      requestAnimationFrame(() => this.close());
     };
 
-    panel.addEventListener("pointermove", this.menuMoveHandler, { passive: true });
+    document.addEventListener("pointermove", this.menuMoveHandler, { passive: true });
 
     // ── Close when pointer leaves the menu panel entirely ──────────────────
     // Three cases are intentionally skipped:
@@ -567,48 +583,20 @@ export class DropdownMenu implements DropdownMenuInstance {
    * Called by SafeTriangle when the delay expires and the pointer has not
    * reached the submenu panel.
    *
-   * Fix #4 – Hysteresis: before closing, re-check whether the cursor is still
-   * within `HYSTERESIS_PX` of the submenu AND heading toward it.  If so,
-   * re-arm the safe zone instead of closing — the user is still en route and
-   * "almost there".  The cycle repeats until the cursor either enters the
-   * submenu or clearly moves away.
+   * The document pointer handler restarts this delay while the pointer moves
+   * through the submenu corridor, so expiry means it stopped short.
    */
   private onSafeZoneExpiry(): void {
     if (this.isPointerOverSubmenu) return;
 
     const cur = this.mouseTracker.current;
-    if (cur && this.submenuEl) {
-      const rect = this.submenuEl.getBoundingClientRect();
-      const nearSubmenu =
-        cur.x >= rect.left - HYSTERESIS_PX &&
-        cur.x <= rect.right + HYSTERESIS_PX &&
-        cur.y >= rect.top - HYSTERESIS_PX &&
-        cur.y <= rect.bottom + HYSTERESIS_PX;
-
-      if (nearSubmenu && this.isMovingTowardSubmenu(cur.x, cur.y)) {
-        // Re-arm the safe zone from the current cursor position.
-        // SafeTriangle.activate() was already called by the expiry path
-        // (deactivate ran before onExpire), so we call it again here.
-        this.safeTriangle.activate({ x: cur.x, y: cur.y }, rect);
-        return;
-      }
-    }
-
     this.hideSubmenu();
     this.clearActiveRows();
 
     // If the pointer has also left the parent menu panel (e.g. the user moved
     // from the submenu into empty space without going back through the menu),
     // close the entire menu so it does not float on screen indefinitely.
-    if (cur && this.menuEl) {
-      const menuRect = this.menuEl.getBoundingClientRect();
-      const insideMenu =
-        cur.x >= menuRect.left &&
-        cur.x <= menuRect.right &&
-        cur.y >= menuRect.top &&
-        cur.y <= menuRect.bottom;
-      if (!insideMenu) this.close();
-    }
+    if (cur && !this.isInside(this.menuEl, cur.x, cur.y)) this.close();
   }
 
   // ─── Active row helpers ───────────────────────────────────────────────────
@@ -669,6 +657,24 @@ export class DropdownMenu implements DropdownMenuInstance {
     const dy = targetY - py;
     // Positive dot product → velocity vector points toward submenu center
     return vel.vx * dx + vel.vy * dy > 0;
+  }
+
+  private isMovingTowardMenu(px: number, py: number): boolean {
+    if (!this.menuEl) return false;
+    const previous = this.mouseTracker.current;
+    if (!previous) return false;
+    const rect = this.menuEl.getBoundingClientRect();
+    return (
+      (px - previous.x) * (rect.left + rect.right - 2 * px) +
+        (py - previous.y) * (rect.top + rect.bottom - 2 * py) >
+      0
+    );
+  }
+
+  private isInside(element: HTMLElement | null, x: number, y: number): boolean {
+    if (!element) return false;
+    const rect = element.getBoundingClientRect();
+    return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
   }
 
   // ─── Positioning ──────────────────────────────────────────────────────────
